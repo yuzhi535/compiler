@@ -98,8 +98,14 @@ public:
         queue<state> q;
         vector<state> waitStates(symbolNum + 1);
         map<state, int> all_states;
-        set<int> normal;
+        set<int> initial;
         set<int> begin;
+        set<int> end;
+
+        for (auto i : beginState)
+            begin.insert(i);
+        for (auto i : endState)
+            end.insert(i);
 
         for (auto k = beginState.begin(); k != beginState.end(); ++k)
         {
@@ -163,28 +169,29 @@ public:
                 }
                 temp.insert(make_pair(i, all_states[waitStates[i]]));
                 dfa.insert(make_pair(all_states[beginState], temp));
-                normal.insert(all_states[beginState]);
             }
         }
         stateNum = all_states.size();
+
         beginState.clear();
         endState.clear();
-        for (int i(0); i < stateNum; ++i)
+        for (auto i : all_states)
         {
-            endState.push_back(i);
-            beginState.push_back(i);
+            for (auto j : begin)
+            {
+                auto k = find(i.first.begin(), i.first.end(), j);
+                if (k != i.first.end())
+                    beginState.push_back(i.second);
+            }
+            for (auto j : end)
+            {
+                auto k = find(i.first.begin(), i.first.end(), j);
+                if (k != i.first.end())
+                    endState.push_back(i.second);
+            }
         }
 
-        for (auto i : normal)
-        {
-            endState.remove(i);
-            beginState.push_back(i);
-        }
-
-        for (auto i : normal) {
-            auto j = dfa.find(i);
-            
-        }
+        cout << "hello" << endl;
     }
 
     explicit NFA(int states, int symbols, diagram &dia, state &beginState, state &endState)
@@ -207,6 +214,12 @@ public:
                    << "->" << j.second << endl;
             }
         }
+
+        os << "开始状态：" << *nfa.beginState.begin() << endl;
+        os << "结束状态集：{ ";
+        for (auto i : nfa.endState)
+            os << i << " ";
+        os << "}" << endl;
         return os;
     }
 };
