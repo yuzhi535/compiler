@@ -178,6 +178,12 @@ public:
         for (auto i : normal)
         {
             endState.remove(i);
+            beginState.push_back(i);
+        }
+
+        for (auto i : normal) {
+            auto j = dfa.find(i);
+            
         }
     }
 
