@@ -6,7 +6,7 @@
  * @date 2021-10-19
  * @note C++11
  * @copyright Copyright (c) 2021
- * 
+ *
  */
 
 #include <iostream>
@@ -27,7 +27,7 @@ using state = list<int>;
 
 /**
  * @brief 最原始的FA。
- * 
+ *
  */
 class FA
 {
@@ -41,9 +41,9 @@ public:
     // 验证是否NFA。若不是，则直接DFA
     bool isNFA()
     {
-        for (auto i : diag)
+        for (const auto &i : diag)
         {
-            for (auto j : i.second)
+            for (const auto &j : i.second)
             {
                 if (j.first == 0)
                     return true;
@@ -72,10 +72,10 @@ public:
         os << "\t状态个数：" << fa.stateNum << endl;
         os << "\t字符表个数：" << fa.symbolNum << endl;
         os << "状态转换：" << endl;
-        for (auto i : fa.diag)
+        for (const auto &i : fa.diag)
         {
             auto start = i.first;
-            for (auto j : i.second)
+            for (const auto &j : i.second)
             {
                 for (auto k : j.second)
                     os << "\t(" << start << "," << j.first << ")"
@@ -90,7 +90,6 @@ class NFA : public FA
 {
 private:
     dfa_diagram dfa;
-    set<int> end;
 
 public:
     void toDFA()
@@ -169,13 +168,14 @@ public:
                 }
                 temp.insert(make_pair(i, all_states[waitStates[i]]));
                 dfa.insert(make_pair(all_states[beginState], temp));
+                waitStates[i].clear();
             }
         }
         stateNum = all_states.size();
 
         beginState.clear();
         endState.clear();
-        for (auto i : all_states)
+        for (const auto &i : all_states)
         {
             for (auto j : begin)
             {
@@ -190,8 +190,6 @@ public:
                     endState.push_back(i.second);
             }
         }
-
-        cout << "hello" << endl;
     }
 
     explicit NFA(int states, int symbols, diagram &dia, state &beginState, state &endState)
@@ -205,7 +203,7 @@ public:
         os << "\t状态个数：" << nfa.stateNum << endl;
         os << "\t字符表个数：" << nfa.symbolNum << endl;
         os << "状态转换：" << endl;
-        for (auto i : nfa.dfa)
+        for (const auto &i : nfa.dfa)
         {
             auto start = i.first;
             for (auto j : i.second)
@@ -229,7 +227,7 @@ void strip(ifstream &in, string &s)
 {
     while (getline(in, s))
     {
-        if (s != "")
+        if (!s.empty())
             break;
     }
 }
@@ -267,7 +265,7 @@ int main(int argc, char const *argv[])
     strip(in, s);
 
     // 获取状态转换图
-    while (1)
+    while (true)
     {
         // 结束
         if (s == "-1")
