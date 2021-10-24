@@ -62,12 +62,7 @@ public:
 
     friend ostream &operator<<(ostream &os, FA &fa)
     {
-        if (fa.isNFA())
-        {
-            os << "NFA" << endl;
-        }
-        else
-            os << "DFA" << endl;
+        os << "DFA" << endl;
 
         os << "\t状态个数：" << fa.stateNum << endl;
         os << "\t字符表个数：" << fa.symbolNum << endl;
@@ -97,7 +92,6 @@ public:
         queue<state> q;
         vector<state> waitStates(symbolNum + 1);
         map<state, int> all_states;
-        set<int> initial;
         set<int> begin;
         set<int> end;
 
@@ -106,6 +100,7 @@ public:
         for (auto i : endState)
             end.insert(i);
 
+        // ℨ 闭包
         for (auto k = beginState.begin(); k != beginState.end(); ++k)
         {
             int index = *k;
@@ -199,10 +194,10 @@ public:
 
     friend ostream &operator<<(ostream &os, NFA &nfa)
     {
-        os << "DFA";
-        os << "\t状态个数：" << nfa.stateNum << endl;
-        os << "\t字符表个数：" << nfa.symbolNum << endl;
-        os << "状态转换：" << endl;
+        os << "NFA" << endl;
+        os << "  状态个数：" << nfa.stateNum << endl;
+        os << "  字符表个数：" << nfa.symbolNum << endl;
+        os << "  状态转换：" << endl;
         for (const auto &i : nfa.dfa)
         {
             auto start = i.first;
@@ -213,8 +208,8 @@ public:
             }
         }
 
-        os << "开始状态：" << *nfa.beginState.begin() << endl;
-        os << "结束状态集：{ ";
+        os << "  开始状态：" << *nfa.beginState.begin() << endl;
+        os << "  结束状态集：{ ";
         for (auto i : nfa.endState)
             os << i << " ";
         os << "}" << endl;
