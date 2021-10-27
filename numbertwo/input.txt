@@ -1,0 +1,3 @@
+integer a("a!=b");
+integer b = 1.0;
+or not;
