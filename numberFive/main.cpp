@@ -9,10 +9,6 @@
  * 
  */
 
-/*
-一个一个比较select集
-*/
-
 #include <iostream>
 #include <string>
 #include <list>
@@ -239,7 +235,7 @@ private:
 
     void printARow()
     {
-        cout << "-----+-----+-----+-----+-----+-----+-----" << '\n';
+        cout << "-------+-------+-------+-------+-------+-------+-------" << '\n';
     }
 
 public:
@@ -357,6 +353,8 @@ public:
         getAllFollowSet();
         makeSelectSet();
 
+        cout << "预测分析表"
+             << "\n";
         cout << '\t';
         map<string, int> col2int;
         vector<string> col;
@@ -369,7 +367,6 @@ public:
         //      add #
         cout << '#' << '\n';
         col.push_back("#");
-
         this->printARow();
         // cout << '\t';
         for (const auto &i : nonTerminal)
@@ -483,9 +480,8 @@ int main(int argc, char const *argv[])
     filename = argv[1];
     Grammar g(filename);
 
-    cout << g << std::endl;
-
     g.printTable();
+    cout << "\n";
     g.parser();
     return 0;
 }
