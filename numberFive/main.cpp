@@ -1,13 +1,17 @@
 /**
  * @file main.cpp
- * @author 周誉喜 (you@domain.com)
+ * @author 周誉喜 (zhouyuxi@stu.edu.cn)
  * @brief 
  * @version 0.1
  * @date 2021-11-11
- * 
+ * @remark c++11
  * @copyright Copyright (c) 2021
  * 
  */
+
+/*
+一个一个比较select集
+*/
 
 #include <iostream>
 #include <string>
@@ -18,6 +22,8 @@
 #include <map>
 #include <set>
 #include <algorithm>
+#include <stack>
+#include <queue>
 
 using std::cin;
 using std::cout;
@@ -28,7 +34,9 @@ using std::map;
 using std::multimap;
 using std::ostream;
 using std::pair;
+using std::queue;
 using std::set;
+using std::stack;
 using std::string;
 using std::vector;
 
@@ -37,7 +45,7 @@ using TERMINAL = set<string>;
 using RULE = multimap<string, vector<string>>;
 using FIRSTSET = map<string, set<string>>;
 using FOLLOWSET = map<string, set<string>>;
-using SELECTSET = multimap<string, pair<int, set<string>>>;
+using SELECTSET = multimap<string, pair<int, string>>;
 
 class Grammar
 {
@@ -71,17 +79,19 @@ class Grammar
     }
 
 private:
-    int nonTerminalNum;      // 非终结符个数
-    NONTERMINAL nonTerminal; // 非终结符
-    int terminalNum;         // 终结符个数
-    TERMINAL terminal;       //终结符
-    int rulesNum;            //规则个数
-    RULE rules;              //规则
-    string startSymbol;      //开始符号
-    FIRSTSET firstSet;       //first集合
-    FOLLOWSET followSet;     //follow集合
-    SELECTSET sellectSet;    //select集合
-    string str;              //待预测字符串
+    int nonTerminalNum;              // 非终结符个数
+    NONTERMINAL nonTerminal;         // 非终结符
+    int terminalNum;                 // 终结符个数
+    TERMINAL terminal;               //终结符
+    int rulesNum;                    //规则个数
+    RULE rules;                      //规则
+    string startSymbol;              //开始符号
+    FIRSTSET firstSet;               //first集合
+    FOLLOWSET followSet;             //follow集合
+    SELECTSET selectSet;             //select集合
+    string str;                      //待预测字符串
+    map<string, map<string, int>> m; // 预测分析表
+    vector<string> allRules;
 
     // 识别字符串中的符号  开始必须不是空白符号
     vector<string> recognizeSymbols(string &s)
@@ -197,32 +207,34 @@ private:
     }
 
     // 找一个产生式的select集
-    set<string> getSelectSet(const string &symbol, const vector<string> &production, int index /*表示第几个规则*/)
+    void getSelectSet(const string &symbol, const vector<string> &production, int index /*表示第几个规则*/)
     {
         auto t = production.at(0);
-        set<string> outputs;
         if (terminal.find(t) != terminal.end())
-            outputs.insert(t);
+        {
+            selectSet.insert(make_pair(symbol, make_pair(index, t)));
+        }
         else
         { // 排除是终结符的可能性
-            if (t == "ε")
-                outputs.insert("ε");
-            else
+            bool flag(false);
+            if (t != "ε")
             {
                 const auto &re = firstSet.at(t);
                 for (const auto &i : re)
-                    outputs.insert(i);
+                    if (i != "ε")
+                        selectSet.insert(make_pair(symbol, make_pair(index, i)));
+                    else
+                        flag = true;
             }
-            if (outputs.find("ε") != outputs.end())
+            else
+                flag = true;
+            if (flag)
             {
-                outputs.erase("ε");
                 auto secondResult = followSet[symbol];
                 for (const auto &j : secondResult)
-                    outputs.insert(j);
+                    selectSet.insert(make_pair(symbol, make_pair(index, j)));
             }
         }
-        sellectSet.insert(make_pair(symbol, make_pair(index, outputs)));
-        return outputs;
     }
 
     void printARow()
@@ -265,9 +277,13 @@ public:
         {
             string t;
             getline(in, t);
+
             auto k = t.find_first_of('>');
             string s = t.substr(k + 2);
             auto symbols = recognizeSymbols(s);
+
+            // 自c++11以来键值对顺序不会改变，就按插入的顺序来
+            allRules.push_back(s);
             rules.insert(make_pair(t.substr(0, k - 2), symbols));
         }
         getline(in, c);
@@ -308,25 +324,6 @@ public:
         }
     }
 
-    void allSelectSet()
-    {
-        std::cout << "Select Set:" << std::endl;
-        int index(0);
-        for (auto &i : rules)
-        {
-            cout << "  Select( " << i.first << " -> ";
-            for (auto &j : i.second)
-                cout << j << ' ';
-            cout << "): ";
-            for (auto &j : getSelectSet(i.first, i.second, index))
-            {
-                cout << j << ' ';
-            }
-            ++index;
-            cout << std::endl;
-        }
-    }
-
     void getAllFirstSet()
     {
         for (const auto &i : nonTerminal)
@@ -344,36 +341,68 @@ public:
         int index(0);
         for (auto &i : rules)
         {
-            for (auto &j : getSelectSet(i.first, i.second, index))
-                ;
+            getSelectSet(i.first, i.second, index);
             ++index;
         }
-
-        // for (const auto &i : sellectSet)
+        // cout << "hello world\n";
+        // for (const auto &i : selectSet)
         // {
-        //     for (const auto &j : i.second.second)
-        //         printf("%s %d %s\n", i.first.c_str(), i.second.first, j.c_str());
+        //     printf("%s %d %s\n", i.first.c_str(), i.second.first, i.second.second.c_str());
         // }
     }
 
-    void print_table()
+    void printTable()
     {
         getAllFirstSet();
         getAllFollowSet();
         makeSelectSet();
 
         cout << '\t';
-        vector<string> row;
+        map<string, int> col2int;
+        vector<string> col;
+
         for (const auto &i : this->terminal)
         {
             cout << i << '\t';
-            row.push_back(i);
+            col.push_back(i);
         }
+        //      add #
+        cout << '#' << '\n';
+        col.push_back("#");
+
         this->printARow();
-        cout << '\t';
+        // cout << '\t';
         for (const auto &i : nonTerminal)
         {
-            
+            for (const auto &i : this->terminal)
+            {
+                col2int[i] = -1;
+            }
+            //      add #
+            col2int["#"] = -1;
+            cout << i << '\t';
+            for (int j(0); j < col2int.size(); ++j)
+            {
+                auto re = this->selectSet.equal_range(i);
+                for (auto k = re.first; k != re.second; ++k)
+                {
+                    col2int[k->second.second] = k->second.first;
+                }
+            }
+            for (const auto j : col)
+            {
+                if (col2int[j] >= 0)
+                {
+                    m[i][j] = col2int[j];
+                    cout << "p" << col2int[j] << '\t';
+                }
+                else
+                {
+                    m[i][j] = -1;
+                    cout << "\t";
+                }
+            }
+            cout << "\n";
         }
     }
 
@@ -381,18 +410,66 @@ public:
     void parser()
     {
         cout << this->str << '#' << "分析过程" << '\n';
+        stack<string> inStack;
         cout << "初始化：#入栈，S入栈；" << '\n';
+        inStack.push("#");
+        inStack.push(startSymbol);
+        // 补终结符
+        if (str[str.size() - 1] != '#')
+            str += '#';
+
+        stack<string> outStack;
+        // 把后面入栈
+        for (auto i = str.rbegin(); i != str.rend(); ++i)
+            outStack.push(string(1, *i));
+        int index(1);
+        while (!inStack.empty())
+        {
+            auto ch = inStack.top();
+            inStack.pop();
+            if (index < 10)
+                cout << "0";
+            auto c = outStack.top();
+            outStack.pop();
+            cout << index << ":出栈X=" << ch << "输入c=" << c << ", ";
+            if (ch == c)
+            {
+                if (ch == "#")
+                {
+                    cout << "匹配，成功。\n";
+                    return;
+                }
+                cout << "匹配，输入指针后移；\n";
+            }
+            else if (m[ch][c] >= 0)
+            {
+                string s = allRules[m[ch][c]];
+                if (s == "ε")
+                {
+                    cout << "查表, M(X, c)=" << ch << "->" << s << "\n";
+                    outStack.push(c);
+                }
+                else
+                {
+                    cout << "查表, M(X, c)=" << ch << "->" << s << ", 产生式右部逆序入栈；"
+                         << "\n";
+
+                    auto symbols = recognizeSymbols(s);
+                    for (auto k = symbols.rbegin(); k != symbols.rend(); ++k)
+                        inStack.push(*k);
+                    outStack.push(c);
+                }
+            }
+            else
+            {
+                cout << "错误!\n";
+                return;
+            }
+            index += 1;
+        }
     }
 
     ~Grammar() = default;
-};
-
-class Parser
-{
-private:
-    string str; // 待预测字符串
-
-public:
 };
 
 int main(int argc, char const *argv[])
@@ -408,7 +485,7 @@ int main(int argc, char const *argv[])
 
     cout << g << std::endl;
 
-    g.print_table();
+    g.printTable();
     g.parser();
     return 0;
 }
