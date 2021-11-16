@@ -86,7 +86,7 @@ private:
     FOLLOWSET followSet;             //follow集合
     SELECTSET selectSet;             //select集合
     string str;                      //待预测字符串
-    map<string, map<string, int>> m; // 预测分析表
+    map<string, map<string, int>> mat; // 预测分析表
     vector<string> allRules;
 
     // 识别字符串中的符号  开始必须不是空白符号
@@ -390,12 +390,12 @@ public:
             {
                 if (col2int[j] >= 0)
                 {
-                    m[i][j] = col2int[j];
+                    mat[i][j] = col2int[j];
                     cout << "p" << col2int[j] << '\t';
                 }
                 else
                 {
-                    m[i][j] = -1;
+                    mat[i][j] = -1;
                     cout << "\t";
                 }
             }
@@ -438,9 +438,9 @@ public:
                 }
                 cout << "匹配，输入指针后移；\n";
             }
-            else if (m[ch][c] >= 0)
+            else if (mat[ch][c] >= 0)
             {
-                string s = allRules[m[ch][c]];
+                string s = allRules[mat[ch][c]];
                 if (s == "ε")
                 {
                     cout << "查表, M(X, c)=" << ch << "->" << s << "\n";
