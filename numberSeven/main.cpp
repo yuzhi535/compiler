@@ -40,18 +40,18 @@ class Grammar;
 
 class GrammarLR0;
 
-using NONTERMINAL = set<string>;			   //非终结符
-using TERMINAL = set<string>;				   //终结符
-using RULE = multimap<string, vector<string>>; //规则
-using ITEMS = vector<Item>;					   //局部的项目集，不是正式的项目集
-using ITEMFAMILY = vector<ItemsSet>;		   //项目集族
+using NONTERMINAL = set<string>;						  //非终结符
+using TERMINAL = set<string>;							  //终结符
+using RULE = multimap<string, pair<vector<string>, int>>; //规则
+using ITEMS = vector<Item>;								  //局部的项目集，不是正式的项目集
+using ITEMFAMILY = vector<ItemsSet>;					  //项目集族
 
 class Grammar
 {
 public:
-	explicit Grammar(const string &filename)
+	explicit Grammar(const string &filename, ifstream &in)
 	{
-		ifstream in(filename);
+		in.open(filename);
 		if (!in.is_open())
 		{
 			std::cerr << "不能打开文件，文件不存在?" << std::endl;
@@ -87,14 +87,10 @@ public:
 			auto k = t.find_first_of('>');
 			string s = t.substr(k + 2);
 			auto symbols = recognizeSymbols(s);
-			rules.insert(make_pair(t.substr(0, k - 2), symbols));
+			rules.insert(make_pair(t.substr(0, k - 2), make_pair(symbols, i)));
 		}
 		getline(in, c);
 		in >> startSymbol;
-		getline(in, c);
-		getline(in, c);
-		getline(in, input);
-		in.close();
 	}
 
 	bool isNonterminal(const string &s) const
@@ -104,7 +100,7 @@ public:
 		return false;
 	}
 
-	pair<multimap<string, vector<string>>::const_iterator, multimap<string, vector<string>>::const_iterator>
+	pair<RULE::const_iterator, RULE::const_iterator>
 	findRulesScope(const string &symbol) const
 	{
 		return rules.equal_range(symbol);
@@ -146,8 +142,8 @@ protected:
 /**
  * @brief 项目集
  * 龙书的说法上分kernel 和 nonkernel
- * T -> @TE
- * T -> T@E
+ * T -> .TE
+ * T -> T.E
  *
  */
 struct Item
@@ -199,11 +195,11 @@ public:
 					vector<string> vec;
 					for (auto i = scope.first; i != scope.second; ++i)
 					{
-						if (!visited[make_pair(str, i->second[0])])
-							nonKernels.push_back(Item(str, 0, i->second));
+						if (!visited[make_pair(str, i->second.first[0])])
+							nonKernels.push_back(Item(str, 0, i->second.first));
 						else
 							continue;
-						visited[make_pair(str, i->second[0])] = true;
+						visited[make_pair(str, i->second.first[0])] = true;
 					}
 				}
 			}
@@ -222,27 +218,35 @@ public:
 					vector<string> vec;
 					for (auto i = scope.first; i != scope.second; ++i)
 					{
-						if (!visited[make_pair(str, i->second[0])])
-							nonKernels.push_back(Item(str, 0, i->second));
+						if (!visited[make_pair(str, i->second.first[0])])
+							nonKernels.push_back(Item(str, 0, i->second.first));
 						else
 							continue;
-						visited[make_pair(str, i->second[0])] = true;
+						visited[make_pair(str, i->second.first[0])] = true;
 					}
 				}
 			}
 		}
 	}
 
-	bool isToReduced()
+	// 该项目集是否可全部被规约
+	bool isAllToReduced() const
 	{
 		for (const auto &kernel : kernels)
-		{
 			if (kernel.pos != kernel.body.size())
 				return false;
-		}
 		if (!nonKernels.empty())
 			return false;
 		return true;
+	}
+
+	// 该项目集是否可被规约
+	bool isToReduced() const
+	{
+		for (const auto &kernel : kernels)
+			if (kernel.pos == kernel.body.size())
+				return true;
+		return false;
 	}
 
 	const ITEMS &getKernel() const
@@ -278,18 +282,23 @@ class GrammarLR0 : public Grammar
 		os << "LR(0) 项目集簇\n";
 		other.printItemsFamily(os);
 		other.printDFA(os);
+		other.printACTION(os);
+		if (other.isLR0)
+			other.printGOTO(os);
+		// other.buildTable();
 		return os;
 	}
 
 public:
-	explicit GrammarLR0(const string &filename) : Grammar(filename)
+	explicit GrammarLR0(const string &filename, ifstream &in) : Grammar(filename, in)
 	{
-		//		augment();
+		// augment();
 		makeItemsFamily();
-		parser();
+		isLR0 = true;
 	}
 
-	void printItemsFamily(ostream &os)
+	// 输出项目集
+	void printItemsFamily(ostream &os) const
 	{
 		for (int i(0); i < itemsSetFamily.size(); ++i)
 		{
@@ -327,7 +336,8 @@ public:
 		}
 	}
 
-	void printDFA(ostream &os)
+	// 输出DFA等信息
+	void printDFA(ostream &os) const
 	{
 		os << "DFA\n";
 		os << "  状态个数：" << this->itemsSetFamily.size() << "\n";
@@ -347,14 +357,90 @@ public:
 		os << "}\n";
 	}
 
-	
+	void printACTION(ostream &os)
+	{
+		//@TODO 验证是否LR(0)文法
+		for (auto &g : this->itemsSetFamily)
+		{
+			if (g.isToReduced())
+			{
+				if (g.getNonKernel().size())
+					isLR0 = false;
+			}
+		}
+		if (isLR0)
+		{
+			os << "  文法是LR(0)文法!\nLR(0)分析表\n Action:  \n\t";
+			// 接着就是一波操作
+			for (const auto &i : terminals)
+			{
+				os << i << "\t";
+			}
+			os << "#\n";
+			for (int i(0); i < this->itemsSetFamily.size(); ++i)
+			{
+				os << "  " << i;
+				for (const auto &sym : terminals)
+				{
+					if (itemsSetFamily[i].isToReduced())
+					{
+						for (const auto &i : terminals)
+						{
+							// 规约
+
+							os << "\t";
+						}
+						os << "\t";
+					}
+					else
+					{
+					}
+					// auto k = gotoTable.find(make_pair(i, sym));
+					// if (k != gotoTable.end())
+					// {
+					// }
+					// else
+					// {
+					// 	os << "\t";
+					// }
+				}
+				if (itemsSetFamily[i].isToReduced())
+				{
+					// 规约
+				}
+				else
+				{
+					os << "\t\n";
+				}
+			}
+		}
+		else
+		{
+			os << "  文法不是LR(0)文法!\n";
+		}
+	}
+
+	void printGOTO(ostream &os)
+	{
+	}
+
+	void parser(string str)
+	{
+		// 分析一个具体字符串
+		if (isLR0)
+		{
+		}
+		else
+		{
+		}
+	}
 
 private:
 	// 增强文法
 	__attribute__((unused)) void augment()
 	{
 		string aug_start_symbol = "S`";
-		rules.insert(make_pair(aug_start_symbol, vector<string>{startSymbol}));
+		rules.insert(make_pair(aug_start_symbol, make_pair(vector<string>{startSymbol}, rules.size())));
 		nonTerminals.insert(aug_start_symbol);
 		nonTerminalNum = nonTerminals.size();
 		startSymbol = aug_start_symbol;
@@ -365,7 +451,7 @@ private:
 	void makeItemsFamily()
 	{
 		auto production = *rules.find(startSymbol);
-		Item item(startSymbol, 0, production.second);
+		Item item(startSymbol, 0, production.second.first);
 		ITEMS t;
 		t.push_back(item);
 		ItemsSet itemsSet(t);
@@ -432,13 +518,11 @@ private:
 				if (!re.second)
 					continue;
 				string shiftSymbol = re.first;
-				// if (flag)
-				// 	continue;
 
 				ItemsSet itemsSet1(items);
 				itemsSet1.closure(this);
 				// 如果有一个项不规约，则可以继续入队列
-				if (!itemsSet1.isToReduced())
+				if (!itemsSet1.isAllToReduced())
 				{
 					q.push(make_pair(itemsSet1, itemsSetFamily.size()));
 				}
@@ -461,7 +545,7 @@ private:
 				ItemsSet itemsSet1(items);
 				itemsSet1.closure(this);
 				// 如果有一个项不规约，则可以继续入队列
-				if (!itemsSet1.isToReduced())
+				if (!itemsSet1.isAllToReduced())
 				{
 					q.push(make_pair(itemsSet1, itemsSetFamily.size()));
 				}
@@ -472,18 +556,9 @@ private:
 		}
 	}
 
-	void parser()
-	{
-		// 分析一个具体字符串
-	}
-
-	// action表的构造
-	void action()
-	{
-	}
-
 	ITEMFAMILY itemsSetFamily;
 	map<pair<int, int>, string> gotoTable;
+	bool isLR0;
 };
 
 int main(int argc, char const *argv[])
@@ -495,7 +570,13 @@ int main(int argc, char const *argv[])
 		return -1;
 	}
 	filename = argv[1];
-	GrammarLR0 g(filename);
+	ifstream in;
+	GrammarLR0 g(filename, in);
+	string c, input;
+	getline(in, c);
+	getline(in, c);
+	getline(in, input);
 	cout << g << std::endl;
+	g.parser(input);
 	return 0;
 }
