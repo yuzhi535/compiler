@@ -241,11 +241,14 @@ public:
 	}
 
 	// 该项目集是否可被规约
-	bool isToReduced() const
+	bool isToReduced(int &index) const
 	{
-		for (const auto &kernel : kernels)
-			if (kernel.pos == kernel.body.size())
+		for (int i(0); i < kernels.size(); ++i)
+			if (kernels[i].pos == kernels[i].body.size())
+			{
+				index = i;
 				return true;
+			}
 		return false;
 	}
 
@@ -351,7 +354,8 @@ public:
 		os << "  结束状态集: { ";
 		for (int i(0); i < this->itemsSetFamily.size(); ++i)
 		{
-			if (this->itemsSetFamily[i].isToReduced())
+			int temp;
+			if (this->itemsSetFamily[i].isToReduced(temp))
 				os << i << " ";
 		}
 		os << "}\n";
@@ -362,7 +366,8 @@ public:
 		//@TODO 验证是否LR(0)文法
 		for (auto &g : this->itemsSetFamily)
 		{
-			if (g.isToReduced())
+			int temp;
+			if (g.isToReduced(temp))
 			{
 				if (g.getNonKernel().size())
 					isLR0 = false;
@@ -379,39 +384,44 @@ public:
 			os << "#\n";
 			for (int i(0); i < this->itemsSetFamily.size(); ++i)
 			{
-				os << "  " << i;
-				for (const auto &sym : terminals)
+				os << "  " << i << "\t";
+				// 若reduce，则没有shift的事情了，并且reduce需要的只有终结符
+				int index;
+				bool flag(false);
+				if (itemsSetFamily[i].isToReduced(index))
 				{
-					if (itemsSetFamily[i].isToReduced())
+					int signal = -1;
+					for (const auto &j : terminals)
 					{
-						for (const auto &i : terminals)
+						auto kernel = itemsSetFamily[i].getKernel()[index];
+						if (kernel.symbol == startSymbol) // ACC
+							flag = true;
+						else // not ACC
 						{
-							// 规约
-
-							os << "\t";
+							auto range = this->findRulesScope(kernel.symbol);
+							for (auto k = range.first; k != range.second; ++k)
+							{
+								if (k->second.first == kernel.body)
+								{
+									os << "r" << k->second.second;
+									signal = k->second.second;
+								}
+							}
 						}
 						os << "\t";
 					}
+					if (flag)
+						os << "ACC";
 					else
-					{
-					}
-					// auto k = gotoTable.find(make_pair(i, sym));
-					// if (k != gotoTable.end())
-					// {
-					// }
-					// else
-					// {
-					// 	os << "\t";
-					// }
+						os << "r" << signal;
+					os << "\n";
+					continue;
 				}
-				if (itemsSetFamily[i].isToReduced())
+				for (const auto &sym : terminals) //action 表
 				{
-					// 规约
+					
 				}
-				else
-				{
-					os << "\t\n";
-				}
+				os << "\n";
 			}
 		}
 		else
@@ -422,6 +432,10 @@ public:
 
 	void printGOTO(ostream &os)
 	{
+		// 非终结符
+		for (const auto sum : nonTerminals)
+		{
+		}
 	}
 
 	void parser(string str)
