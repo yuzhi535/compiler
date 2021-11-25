@@ -289,6 +289,77 @@ public:
 		parser();
 	}
 
+	void printItemsFamily(ostream &os)
+	{
+		for (int i(0); i < itemsSetFamily.size(); ++i)
+		{
+			os << "I" << i << "\n";
+			const auto &kernel = itemsSetFamily[i].getKernel();
+			const auto &nonKernel = itemsSetFamily[i].getNonKernel();
+
+			auto print = [&](Item k)
+			{
+				os << "\t" << k.symbol << " -> ";
+				int j(0);
+				for (; j < k.body.size(); ++j)
+				{
+					if (k.pos == j)
+					{
+						os << ". ";
+					}
+					os << k.body[j] << ' ';
+				}
+				if (k.pos == j)
+				{
+					os << ". ";
+				}
+				os << "\n";
+			};
+
+			for (const auto &k : kernel)
+			{
+				print(k);
+			}
+			for (const auto &k : nonKernel)
+			{
+				print(k);
+			}
+		}
+	}
+
+	void printDFA(ostream &os)
+	{
+		os << "DFA\n";
+		os << "  状态个数：" << this->itemsSetFamily.size() << "\n";
+		os << "  字符表个数" << (this->terminalNum + this->nonTerminalNum) << "\n";
+		os << "  状态转换: \n";
+		for (const auto &i : this->gotoTable)
+		{
+			os << "  (" << i.first.first << "," << i.first.second << ")->" << i.second << "\n";
+		}
+		os << "  开始状态: 0\n";
+		os << "  结束状态集: { ";
+		for (int i(0); i < this->itemsSetFamily.size(); ++i)
+		{
+			if (this->itemsSetFamily[i].isToReduced())
+				os << i << " ";
+		}
+		os << "}\n";
+	}
+
+	
+
+private:
+	// 增强文法
+	__attribute__((unused)) void augment()
+	{
+		string aug_start_symbol = "S`";
+		rules.insert(make_pair(aug_start_symbol, vector<string>{startSymbol}));
+		nonTerminals.insert(aug_start_symbol);
+		nonTerminalNum = nonTerminals.size();
+		startSymbol = aug_start_symbol;
+	}
+
 	// 制作项目集簇
 	// 往右移动一个位置
 	void makeItemsFamily()
@@ -399,67 +470,6 @@ public:
 					itemsSetFamily.push_back(itemsSet1);
 			}
 		}
-	}
-
-	void printItemsFamily(ostream &os)
-	{
-		for (int i(0); i < itemsSetFamily.size(); ++i)
-		{
-			os << "I" << i << "\n";
-			const auto &kernel = itemsSetFamily[i].getKernel();
-			const auto &nonKernel = itemsSetFamily[i].getNonKernel();
-
-			auto print = [&](Item k)
-			{
-				os << "\t" << k.symbol << " -> ";
-				int j(0);
-				for (; j < k.body.size(); ++j)
-				{
-					if (k.pos == j)
-					{
-						os << ". ";
-					}
-					os << k.body[j] << ' ';
-				}
-				if (k.pos == j)
-				{
-					os << ". ";
-				}
-				os << "\n";
-			};
-
-			for (const auto &k : kernel)
-			{
-				print(k);
-			}
-			for (const auto &k : nonKernel)
-			{
-				print(k);
-			}
-		}
-	}
-
-	void printDFA(ostream &os)
-	{
-		os << "DFA\n";
-		os << "  状态个数：" << this->itemsSetFamily.size() << "\n";
-		os << "  字符表个数" << (this->terminalNum + this->nonTerminalNum) << "\n";
-		os << "  状态转换: \n";
-		for (const auto &i : this->gotoTable)
-		{
-			os << "  (" << i.first.first << "," << i.first.second << ")->" << i.second << "\n";
-		}
-	}
-
-private:
-	// 增强文法
-	__attribute__((unused)) void augment()
-	{
-		string aug_start_symbol = "S`";
-		rules.insert(make_pair(aug_start_symbol, vector<string>{startSymbol}));
-		nonTerminals.insert(aug_start_symbol);
-		nonTerminalNum = nonTerminals.size();
-		startSymbol = aug_start_symbol;
 	}
 
 	void parser()
