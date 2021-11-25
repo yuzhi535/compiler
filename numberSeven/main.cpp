@@ -514,7 +514,7 @@ private:
 							// 如果找到之前的项
 							if (itemsSetFamily[i].getKernel() == items)
 							{
-								gotoTable[make_pair(index, i)] = shiftSymbol;
+								gotoTable[make_pair(index, character)] = i;
 								flag = true; //表示可以shift，但是添加到表里面了，也就是不用再添加了
 								break;
 							}
@@ -540,7 +540,7 @@ private:
 				{
 					q.push(make_pair(itemsSet1, itemsSetFamily.size()));
 				}
-				gotoTable[make_pair(index, itemsSetFamily.size())] = shiftSymbol;
+				gotoTable[make_pair(index, nonTerminal)] = itemsSetFamily.size();
 				if (!flag)
 					itemsSetFamily.push_back(itemsSet1);
 			}
@@ -563,7 +563,7 @@ private:
 				{
 					q.push(make_pair(itemsSet1, itemsSetFamily.size()));
 				}
-				gotoTable[make_pair(index, itemsSetFamily.size())] = shiftSymbol;
+				gotoTable[make_pair(index, terminal)] = itemsSetFamily.size();
 				if (!flag)
 					itemsSetFamily.push_back(itemsSet1);
 			}
@@ -571,7 +571,7 @@ private:
 	}
 
 	ITEMFAMILY itemsSetFamily;
-	map<pair<int, int>, string> gotoTable;
+	map<pair<int, string>, int> gotoTable;
 	bool isLR0;
 };
 
