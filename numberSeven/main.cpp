@@ -18,6 +18,7 @@
 #include <set>
 #include <algorithm>
 #include <queue>
+#include <stack>
 
 using std::cout;
 using std::fstream;
@@ -29,6 +30,7 @@ using std::ostream;
 using std::pair;
 using std::queue;
 using std::set;
+using std::stack;
 using std::string;
 using std::vector;
 
@@ -45,6 +47,28 @@ using TERMINAL = set<string>;							  //终结符
 using RULE = multimap<string, pair<vector<string>, int>>; //规则
 using ITEMS = vector<Item>;								  //局部的项目集，不是正式的项目集
 using ITEMFAMILY = vector<ItemsSet>;					  //项目集族
+
+vector<string> recognizeSymbols(string &s)
+{
+	vector<string> outputs;
+	int start(0), i;
+	for (i = 0; i < s.size(); ++i)
+	{
+		if (s[i] != ' ')
+			continue;
+		else
+		{
+			outputs.push_back(s.substr(start, i - start));
+			while (s[i++] == ' ')
+				;
+			--i;
+			start = i;
+		}
+	}
+	if (s[i - 1] != ' ' && i == s.size())
+		outputs.push_back(s.substr(start, i - start));
+	return outputs;
+}
 
 class Grammar
 {
@@ -104,28 +128,6 @@ public:
 	findRulesScope(const string &symbol) const
 	{
 		return rules.equal_range(symbol);
-	}
-
-	vector<string> recognizeSymbols(string &s) const
-	{
-		vector<string> outputs;
-		int start(0), i;
-		for (i = 0; i < s.size(); ++i)
-		{
-			if (s[i] != ' ')
-				continue;
-			else
-			{
-				outputs.push_back(s.substr(start, i - start));
-				while (s[i++] == ' ')
-					;
-				--i;
-				start = i;
-			}
-		}
-		if (s[i - 1] != ' ' && i == s.size())
-			outputs.push_back(s.substr(start, i - start));
-		return outputs;
 	}
 
 protected:
@@ -210,7 +212,7 @@ public:
 			if (pos < nonKernels[i].body.size())
 			{
 				string str = nonKernels[i].body[pos];
-				str = g->recognizeSymbols(str)[0];
+				str = recognizeSymbols(str)[0];
 				// 是否非终结符
 				if (g->isNonterminal(str))
 				{
@@ -240,8 +242,8 @@ public:
 		return true;
 	}
 
-	// 该项目集是否可被规约
-	bool isToReduced(int &index) const
+	// 该项目集是否可被规约，在LR(0)里面与上一个函数其实是一样的
+	bool isToBeReduced(int &index) const
 	{
 		for (int i(0); i < kernels.size(); ++i)
 			if (kernels[i].pos == kernels[i].body.size())
@@ -286,9 +288,13 @@ class GrammarLR0 : public Grammar
 		other.printItemsFamily(os);
 		other.printDFA(os);
 		other.printACTION(os);
+		os << "\n";
 		if (other.isLR0)
 			other.printGOTO(os);
-		// other.buildTable();
+		else
+		{
+			os << "不是LR0!文法有错!\n";
+		}
 		return os;
 	}
 
@@ -344,7 +350,7 @@ public:
 	{
 		os << "DFA\n";
 		os << "  状态个数：" << this->itemsSetFamily.size() << "\n";
-		os << "  字符表个数" << (this->terminalNum + this->nonTerminalNum) << "\n";
+		os << "  字符表个数: " << (this->terminalNum + this->nonTerminalNum) << "\n";
 		os << "  状态转换: \n";
 		for (const auto &i : this->gotoTable)
 		{
@@ -354,8 +360,7 @@ public:
 		os << "  结束状态集: { ";
 		for (int i(0); i < this->itemsSetFamily.size(); ++i)
 		{
-			int temp;
-			if (this->itemsSetFamily[i].isToReduced(temp))
+			if (this->itemsSetFamily[i].isAllToReduced())
 				os << i << " ";
 		}
 		os << "}\n";
@@ -367,7 +372,7 @@ public:
 		for (auto &g : this->itemsSetFamily)
 		{
 			int temp;
-			if (g.isToReduced(temp))
+			if (g.isToBeReduced(temp))
 			{
 				if (g.getNonKernel().size())
 					isLR0 = false;
@@ -388,7 +393,7 @@ public:
 				// 若reduce，则没有shift的事情了，并且reduce需要的只有终结符
 				int index;
 				bool flag(false);
-				if (itemsSetFamily[i].isToReduced(index))
+				if (itemsSetFamily[i].isToBeReduced(index))
 				{
 					int signal = -1;
 					for (const auto &j : terminals)
@@ -411,7 +416,10 @@ public:
 						os << "\t";
 					}
 					if (flag)
+					{
+						// gotoTable[make_pair()]
 						os << "ACC";
+					}
 					else
 						os << "r" << signal;
 					os << "\n";
@@ -419,7 +427,12 @@ public:
 				}
 				for (const auto &sym : terminals) //action 表
 				{
-					
+					auto result = gotoTable.find(make_pair(i, sym));
+					if (result != gotoTable.end())
+					{
+						os << "s" << result->second;
+					}
+					os << "\t";
 				}
 				os << "\n";
 			}
@@ -433,19 +446,100 @@ public:
 	void printGOTO(ostream &os)
 	{
 		// 非终结符
-		for (const auto sum : nonTerminals)
+		os << "Goto:\n";
+		for (const auto sym : nonTerminals)
 		{
+			if (sym != startSymbol) // 准确的说 应该不是增强文法的开始符号
+				os << "   " << sym << "\t";
+		}
+		os << "\n";
+		for (int i(0); i < this->itemsSetFamily.size(); ++i)
+		{
+			os << i << "  ";
+			for (const auto &sym : nonTerminals)
+			{
+				auto result = gotoTable.find(make_pair(i, sym));
+				if (result != gotoTable.end())
+				{
+					os << result->second;
+				}
+				os << "\t";
+			}
+			os << "\n";
 		}
 	}
 
-	void parser(string str)
+	void parser(vector<string> &input)
 	{
 		// 分析一个具体字符串
 		if (isLR0)
 		{
+			// 栈  入栈 出栈
+			vector<int> inStack; // 我觉得只用状态集就行了
+			inStack.push_back(0);
+			int id = 0;
+			while (!inStack.empty())
+			{
+				int item = inStack[inStack.size() - 1];
+				int index;
+				if (this->itemsSetFamily[item].isToBeReduced(index))
+				{
+					auto kernel = itemsSetFamily[item].getKernel()[index];
+					auto range = this->findRulesScope(kernel.symbol);
+					for (auto k = range.first; k != range.second; ++k)
+					{
+						if (k->second.first == kernel.body)
+						{
+							// os << "r" << k->second.second;
+							// signal = k->second.second;
+							cout << "规约: " << kernel.symbol << " -> ";
+							for (const auto kk : kernel.body)
+								cout << kk << ' ';
+							int len(0);
+							for (; len < kernel.body.size(); ++len)
+								inStack.pop_back();
+							if (inStack.empty() && id < input.size() - 1)
+							{
+								std::cerr << "失败\n";
+								break; //跳出循环了
+							}
+							int target = gotoTable.at(make_pair(inStack[inStack.size() - 1], kernel.symbol));
+							cout << "进栈: " << target << ", " << kernel.symbol << "\n";
+							if (inStack.size() == 1 && id == input.size() - 1)
+							{
+								std::cout << "成功接收\n";
+								inStack.clear();
+								break;
+							}
+							inStack.push_back(target);
+						}
+					}
+				}
+				else
+				{
+					// shift (移进)
+					auto k = gotoTable.find(make_pair(item, input[id]));
+					if (k != gotoTable.end())
+					{
+						cout << "移进：" << k->second << ", " << input[id] << "\n";
+						// inStack.push_back(string(*ptr, 1));
+						item = k->second;
+						inStack.push_back(item);
+						id += 1; //字符串向后移动
+					}
+					else
+					{
+						std::cerr << "出现错误!\n";
+						break;
+					}
+				}
+
+				// auto k = gotoTable.find(make_pair())
+			}
 		}
 		else
 		{
+			cout << "不是LR0文法，无法分析\n";
 		}
 	}
 
@@ -586,11 +680,14 @@ int main(int argc, char const *argv[])
 	filename = argv[1];
 	ifstream in;
 	GrammarLR0 g(filename, in);
-	string c, input;
-	getline(in, c);
-	getline(in, c);
-	getline(in, input);
+	string input;
+	do
+	{
+		getline(in, input);
+	} while (input == "");
+	vector<string>
+		ans = recognizeSymbols(input);
 	cout << g << std::endl;
-	g.parser(input);
+	g.parser(ans);
 	return 0;
 }
