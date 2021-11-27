@@ -588,6 +588,12 @@ private:
 					int pos = kk.pos;
 					auto body = kk.body;
 					string symbol = kk.symbol;
+					if (pos >= body.size())
+					{
+						cout << "存在规约-移进冲突!\n";
+						cout << "不符合LR0文法！\n";
+						exit(-1);
+					}
 					shiftSymbol = body[pos];
 					pos += 1;
 					if (shiftSymbol == character)
