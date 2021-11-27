@@ -232,7 +232,7 @@ public:
 	}
 
 	// 该项目集是否可全部被规约
-	bool isAllToReduced() const
+	bool isAllToBeReduced() const
 	{
 		for (const auto &kernel : kernels)
 			if (kernel.pos != kernel.body.size())
@@ -360,7 +360,7 @@ public:
 		os << "  结束状态集: { ";
 		for (int i(0); i < this->itemsSetFamily.size(); ++i)
 		{
-			if (this->itemsSetFamily[i].isAllToReduced())
+			if (this->itemsSetFamily[i].isAllToBeReduced())
 				os << i << " ";
 		}
 		os << "}\n";
@@ -630,7 +630,7 @@ private:
 				ItemsSet itemsSet1(items);
 				itemsSet1.closure(this);
 				// 如果有一个项不规约，则可以继续入队列
-				if (!itemsSet1.isAllToReduced())
+				if (!itemsSet1.isAllToBeReduced())
 				{
 					q.push(make_pair(itemsSet1, itemsSetFamily.size()));
 				}
@@ -653,7 +653,7 @@ private:
 				ItemsSet itemsSet1(items);
 				itemsSet1.closure(this);
 				// 如果有一个项不规约，则可以继续入队列
-				if (!itemsSet1.isAllToReduced())
+				if (!itemsSet1.isAllToBeReduced())
 				{
 					q.push(make_pair(itemsSet1, itemsSetFamily.size()));
 				}
@@ -685,8 +685,7 @@ int main(int argc, char const *argv[])
 	{
 		getline(in, input);
 	} while (input == "");
-	vector<string>
-		ans = recognizeSymbols(input);
+	vector<string> ans = recognizeSymbols(input);
 	cout << g << std::endl;
 	g.parser(ans);
 	return 0;
