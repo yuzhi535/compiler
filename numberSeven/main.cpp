@@ -73,15 +73,8 @@ vector<string> recognizeSymbols(string &s)
 class Grammar
 {
 public:
-	explicit Grammar(const string &filename, ifstream &in)
+	explicit Grammar(ifstream &in)
 	{
-		in.open(filename);
-		if (!in.is_open())
-		{
-			std::cerr << "不能打开文件，文件不存在?" << std::endl;
-			exit(-1);
-		}
-
 		in >> nonTerminalNum;
 		for (int i = 0; i < nonTerminalNum; ++i)
 		{
@@ -299,7 +292,7 @@ class GrammarLR0 : public Grammar
 	}
 
 public:
-	explicit GrammarLR0(const string &filename, ifstream &in) : Grammar(filename, in)
+	explicit GrammarLR0(ifstream &in) : Grammar(in)
 	{
 		// augment();
 		makeItemsFamily();
@@ -679,7 +672,13 @@ int main(int argc, char const *argv[])
 	}
 	filename = argv[1];
 	ifstream in;
-	GrammarLR0 g(filename, in);
+	in.open(filename);
+	if (!in.is_open())
+	{
+		std::cerr << "不能打开文件，文件不存在?" << std::endl;
+		exit(-1);
+	}
+	GrammarLR0 g(in);
 	string input;
 	do
 	{
