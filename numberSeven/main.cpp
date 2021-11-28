@@ -143,17 +143,17 @@ protected:
  */
 struct Item
 {
-	Item(string sym, int position, vector<string> b) : symbol(sym), pos(position), body(b)
+	Item(string sym, int position, vector<string> b) : symbol(sym), dotPos(position), body(b)
 	{
 	}
 
 	bool operator==(const Item &other) const
 	{
-		return symbol == other.symbol && pos == other.pos && body == other.body;
+		return symbol == other.symbol && dotPos == other.dotPos && body == other.body;
 	}
 
 	vector<string> body;
-	int pos;
+	int dotPos;
 	string symbol;
 };
 
@@ -179,7 +179,7 @@ public:
 		map<pair<string, string>, bool> visited;
 		for (const auto &item : kernels)
 		{
-			int pos = item.pos;
+			int pos = item.dotPos;
 			if (pos < item.body.size())
 			{
 				string str = item.body[pos];
@@ -187,7 +187,6 @@ public:
 				if (g->isNonterminal(str))
 				{
 					auto scope = g->findRulesScope(str);
-					vector<string> vec;
 					for (auto i = scope.first; i != scope.second; ++i)
 					{
 						if (!visited[make_pair(str, i->second.first[0])])
@@ -201,24 +200,19 @@ public:
 		}
 		for (int i(0); i < nonKernels.size(); ++i)
 		{
-			int pos = nonKernels[i].pos;
+			int pos = nonKernels[i].dotPos;
 			if (pos < nonKernels[i].body.size())
 			{
 				string str = nonKernels[i].body[pos];
 				str = recognizeSymbols(str)[0];
-				// 是否非终结符
-				if (g->isNonterminal(str))
+				auto scope = g->findRulesScope(str);
+				for (auto i = scope.first; i != scope.second; ++i)
 				{
-					auto scope = g->findRulesScope(str);
-					vector<string> vec;
-					for (auto i = scope.first; i != scope.second; ++i)
-					{
-						if (!visited[make_pair(str, i->second.first[0])])
-							nonKernels.push_back(Item(str, 0, i->second.first));
-						else
-							continue;
-						visited[make_pair(str, i->second.first[0])] = true;
-					}
+					if (!visited[make_pair(str, i->second.first[0])])
+						nonKernels.push_back(Item(str, 0, i->second.first));
+					else
+						continue;
+					visited[make_pair(str, i->second.first[0])] = true;
 				}
 			}
 		}
@@ -228,7 +222,7 @@ public:
 	bool isAllToBeReduced() const
 	{
 		for (const auto &kernel : kernels)
-			if (kernel.pos != kernel.body.size())
+			if (kernel.dotPos != kernel.body.size())
 				return false;
 		if (!nonKernels.empty())
 			return false;
@@ -239,7 +233,7 @@ public:
 	bool isToBeReduced(int &index) const
 	{
 		for (int i(0); i < kernels.size(); ++i)
-			if (kernels[i].pos == kernels[i].body.size())
+			if (kernels[i].dotPos == kernels[i].body.size())
 			{
 				index = i;
 				return true;
@@ -314,13 +308,13 @@ public:
 				int j(0);
 				for (; j < k.body.size(); ++j)
 				{
-					if (k.pos == j)
+					if (k.dotPos == j)
 					{
 						os << ". ";
 					}
 					os << k.body[j] << ' ';
 				}
-				if (k.pos == j)
+				if (k.dotPos == j)
 				{
 					os << ". ";
 				}
@@ -362,12 +356,12 @@ public:
 	void printACTION(ostream &os)
 	{
 		//@TODO 验证是否LR(0)文法
-		for (auto &g : this->itemsSetFamily)
+		for (auto &itemsSet : this->itemsSetFamily)
 		{
 			int temp;
-			if (g.isToBeReduced(temp))
+			if (itemsSet.isToBeReduced(temp))
 			{
-				if (g.getNonKernel().size())
+				if (itemsSet.getNonKernel().size())
 					isLR0 = false;
 			}
 		}
@@ -585,15 +579,11 @@ private:
 				for (const auto &kk : kkernels)
 				{
 					// 遍历得到可以shift的item
-					int pos = kk.pos;
+					int pos = kk.dotPos;
 					auto body = kk.body;
 					string symbol = kk.symbol;
 					if (pos >= body.size())
-					{
-						cout << "存在规约-移进冲突!\n";
-						cout << "不符合LR0文法！\n";
-						exit(-1);
-					}
+						continue;
 					shiftSymbol = body[pos];
 					pos += 1;
 					if (shiftSymbol == character)
@@ -661,7 +651,7 @@ private:
 					itemsSetFamily.push_back(itemsSet1);
 			}
 		}
-	}
+		}
 
 	ITEMFAMILY itemsSetFamily;
 	map<pair<int, string>, int> gotoTable;
