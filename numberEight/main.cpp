@@ -132,9 +132,9 @@ public:
 
 	set<string> &getFirstSet(const string &symbol)
 	{
-		auto back = firstSet.find(symbol);
-		if (back != firstSet.end())
-			return firstSet[symbol];
+		// auto back = firstSet.find(symbol);
+		// if (back != firstSet.end())
+		return firstSet[symbol];
 	}
 
 	// 求一个非终结符的First集
@@ -191,7 +191,7 @@ protected:
  */
 struct Item
 {
-	Item(string sym, int position, vector<string> b, string t_lookahead = "$")
+	Item(string sym, int position, vector<string> b, string t_lookahead = "#")
 		: symbol(sym), dotPos(position), body(b), lookahead(t_lookahead)
 	{
 	}
@@ -259,8 +259,8 @@ public:
 
 		auto clos = [&](vector<Item> &items, int index, bool isKernel)
 		{
-			const int &pos = items[index].dotPos; // 必是0
-			if (pos < items[index].body.size())	  // 如果还有移动的空间
+			const int &pos = items[index].dotPos;
+			if (pos < items[index].body.size()) // 如果还有移动的空间
 			{
 				string lookahead = items[index].lookahead;
 				string str = items[index].body[pos];
@@ -373,7 +373,7 @@ public:
 		return true;
 	}
 
-	// 该项目集是否可被规约，在LR(0)里面与上一个函数其实是一样的
+	// 该项目集是否可被规约，在LR(0)里面与上一个函数其实是一样的，但在LR1不一样
 	bool isToBeReduced(int &index) const
 	{
 		for (int i(0); i < kernels.size(); ++i)
@@ -409,13 +409,12 @@ private:
 
 /**
  * @brief LR1文法
- * @TODO first set
  * @TODO parse
- * @TODO
+ * @TODO 检查是否LR1文法
  */
 class GrammarLR1 : public Grammar
 {
-	friend ostream &operator<<(ostream &os, const GrammarLR1 &other)
+	friend ostream &operator<<(ostream &os, GrammarLR1 &other)
 	{
 		os << "CFG=(VN,VT,P,S)\n";
 		os << "VN: ";
@@ -444,6 +443,17 @@ class GrammarLR1 : public Grammar
 
 		os << "[LR(1) item set cluster]\n";
 
+		other.printItemsFamily(os);
+
+		os << "[LR(1) analytical table]\n";
+
+		other.printACTION(os);
+
+		other.printGOTO(os);
+
+		if (other.isLR1)
+			os << "文法是 LR(1) 文法！\n";
+
 		return os;
 	}
 
@@ -452,11 +462,236 @@ public:
 	{
 		getAllFirstSet();
 		makeItemsSetFamily();
+		isLR1 = true;
+	}
+
+	// 输出action
+	void printACTION(ostream &os)
+	{
+		if (isLR1)
+		{
+			os << "  Action:  \n\t";
+			// 接着就是一波操作
+			for (const auto &i : terminals)
+			{
+				os << i << "\t";
+			}
+			os << "#\n";
+			for (int i(0); i < this->itemsSetFamily.size(); ++i)
+			{
+				os << "  " << i << "\t";
+				// 若reduce，则没有shift的事情了，并且reduce需要的只有终结符
+				int index;
+				bool flag(false);
+				if (itemsSetFamily[i].isToBeReduced(index))
+				{
+					int signal = -1;
+					for (const auto &j : terminals)
+					{
+						auto kernel = itemsSetFamily[i].getKernel()[index];
+						if (kernel.symbol == startSymbol) // ACC
+							flag = true;
+						else // not ACC
+						{
+							auto range = this->findRulesScope(kernel.symbol);
+							for (auto k = range.first; k != range.second; ++k)
+							{
+								if (k->second.first == kernel.body && (j == kernel.lookahead))
+								{
+									os << "r" << k->second.second;
+									signal = k->second.second;
+								}
+								if (k->second.first == kernel.body && kernel.lookahead == "#")
+								{
+									signal = k->second.second;
+								}
+							}
+						}
+						os << "\t";
+					}
+					if (flag)
+					{
+						// gotoTable[make_pair()]
+						os << "ACC";
+					}
+					else
+					{
+						os << "r" << signal;
+					}
+					os << "\n";
+					continue;
+				}
+				for (const auto &sym : terminals) //action 表
+				{
+					auto result = gotoTable.find(make_pair(i, sym));
+					if (result != gotoTable.end())
+					{
+						os << "s" << result->second;
+					}
+					os << "\t";
+				}
+				os << "\n";
+			}
+		}
+		// else
+		// {
+		// 	os << "  文法不是LR(1)文法!\n";
+		// }
+	}
+
+	// 输出goto
+	void printGOTO(ostream &os)
+	{
+		// 非终结符
+		os << "Goto:\n";
+		for (const auto sym : nonTerminals)
+		{
+			if (sym != startSymbol) // 准确的说 应该不是增强文法的开始符号
+				os << "   " << sym << "\t";
+		}
+		os << "\n";
+		for (int i(0); i < this->itemsSetFamily.size(); ++i)
+		{
+			os << i << "  ";
+			for (const auto &sym : nonTerminals)
+			{
+				auto result = gotoTable.find(make_pair(i, sym));
+				if (result != gotoTable.end())
+				{
+					os << result->second;
+				}
+				os << "\t";
+			}
+			os << "\n";
+		}
+	}
+
+	// 输出项目集
+	void printItemsFamily(ostream &os) const
+	{
+		for (int i(0); i < itemsSetFamily.size(); ++i)
+		{
+			os << "I" << i << "\n";
+			const auto &kernel = itemsSetFamily[i].getKernel();
+			const auto &nonKernel = itemsSetFamily[i].getNonKernel();
+
+			auto print = [&](Item k)
+			{
+				os << "\t" << k.symbol << " -> ";
+				int j(0);
+				for (; j < k.body.size(); ++j)
+				{
+					if (k.dotPos == j)
+					{
+						os << ". ";
+					}
+					os << k.body[j] << ' ';
+				}
+				if (k.dotPos == j)
+				{
+					os << ". ";
+				}
+				os << ", " << k.lookahead << "\n";
+			};
+
+			for (const auto &k : kernel)
+			{
+				print(k);
+			}
+			for (const auto &k : nonKernel)
+			{
+				print(k);
+			}
+		}
 	}
 
 	// 总控程序
-	void parser(vector<string> input)
+	// 需要规约的时候，
+	void parser(vector<string> &input)
 	{
+		// 分析一个具体字符串
+		if (isLR1)
+		{
+			// 栈  入栈 出栈
+			vector<int> inStack; // 我觉得只用状态集就行了
+			inStack.push_back(0);
+			int id = 0;
+			while (!inStack.empty())
+			{
+				int item = inStack[inStack.size() - 1];
+				int index;
+				bool hasReduced = false;
+				bool isNotShifted = false;
+				if (this->itemsSetFamily[item].isToBeReduced(index))
+				{
+					auto kernel = itemsSetFamily[item].getKernel()[index];
+					auto range = this->findRulesScope(kernel.symbol);
+					for (auto k = range.first; k != range.second; ++k)
+					{
+						if (k->second.first == kernel.body)
+						{
+							// os << "r" << k->second.second;
+							// signal = k->second.second;
+							if (input[id] == kernel.lookahead)
+							{
+								cout << "规约: " << kernel.symbol << " -> ";
+								for (const auto kk : kernel.body)
+									cout << kk << ' ';
+								int len(0);
+								for (; len < kernel.body.size(); ++len)
+									inStack.pop_back();
+								if (inStack.empty() && id < input.size() - 1)
+								{
+									std::cerr << "失败\n";
+									exit(-1);
+								}
+								int target = gotoTable.at(make_pair(inStack[inStack.size() - 1], kernel.symbol));
+								cout << "进栈: " << target << ", " << kernel.symbol << "\n";
+								if (inStack.size() == 1 && id == input.size() - 1)
+								{
+									std::cout << "成功接收\n";
+									inStack.clear();
+									hasReduced = true;
+									break;
+								}
+								inStack.push_back(target);
+								hasReduced = true;
+								break;
+							}
+						}
+					}
+				}
+				if (!hasReduced)
+				{
+					// shift (移进)
+					auto k = gotoTable.find(make_pair(item, input[id]));
+					if (k != gotoTable.end())
+					{
+						cout << "移进：" << k->second << ", " << input[id] << "\n";
+						// inStack.push_back(string(*ptr, 1));
+						item = k->second;
+						inStack.push_back(item);
+						id += 1; //字符串向后移动
+						isNotShifted = true;
+					}
+					else
+					{
+						std::cerr << "出现错误!\n";
+						break;
+					}
+				}
+				if (!hasReduced && !isNotShifted)
+				{
+					std::cerr << "错误!\n";
+					exit(-1);
+				}
+				// auto k = gotoTable.find(make_pair())
+			}
+		}
+		else
+		{
+			cout << "不是LR1文法，无法分析\n";
+		}
 	}
 
 private:
@@ -499,7 +734,6 @@ private:
 			// 查看哪些是否可以移进一个位置
 			auto find = [&](const string &character, bool &flag, ITEMS &items) -> pair<string, bool>
 			{
-				string shiftSymbol;
 				bool flag1 = false;
 				for (const auto &kk : kkernels)
 				{
@@ -514,7 +748,7 @@ private:
 					}
 
 					// 如果是要移进
-					shiftSymbol = body[pos];
+					string shiftSymbol = body[pos];
 					pos += 1;
 
 					if (shiftSymbol == character)
@@ -535,7 +769,7 @@ private:
 						}
 					}
 				}
-				return make_pair(shiftSymbol, flag1);
+				return make_pair(character, flag1);
 			};
 
 			// 先移进非终结符
@@ -555,9 +789,11 @@ private:
 				{
 					q.push(make_pair(itemsSet1, itemsSetFamily.size()));
 				}
-				gotoTable[make_pair(index, nonTerminal)] = itemsSetFamily.size();
 				if (!flag)
+				{
+					gotoTable[make_pair(index, nonTerminal)] = itemsSetFamily.size();
 					itemsSetFamily.push_back(itemsSet1);
+				}
 			}
 
 			// 移进终结符
@@ -588,7 +824,7 @@ private:
 
 	ITEMFAMILY itemsSetFamily;
 	map<pair<int, string>, int> gotoTable;
-	bool isLR0;
+	bool isLR1;
 };
 
 int main(int argc, char const *argv[])
@@ -615,6 +851,6 @@ int main(int argc, char const *argv[])
 	} while (input == "");
 	vector<string> ans = recognizeSymbols(input);
 	cout << g << std::endl;
-	// g.parser(ans);
+	g.parser(ans);
 	return 0;
 }
