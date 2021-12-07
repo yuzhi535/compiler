@@ -86,8 +86,8 @@ public:
 		: Node(c)
 	{
 		parent = make_shared<Node>(p);
-		lChild = make_shared<Node>(l);
-		rChild = make_shared<Node>(r);
+		child = make_shared<Node>(l);
+		sibling = make_shared<Node>(r);
 	}
 	// 创建父节点
 	shared_ptr<Node> createParent(shared_ptr<Node> node)
@@ -99,23 +99,30 @@ public:
 	// 创建子节点  注意节点是创建的时候决定是否兄弟还是孩子，即红还是黑 其实红黑颜色是在遍历的时候非常重要
 	shared_ptr<Node> createChild(shared_ptr<Node> node)
 	{
-		this->lChild = node;
+		this->child = node;
 		node->parent = make_shared<Node>(*this);
 		return node;
 	}
 	// 创建兄弟节点
 	shared_ptr<Node> createSibling(shared_ptr<Node> node)
 	{
-		this->rChild = node;
+		this->sibling = node;
 		node->parent = make_shared<Node>(*this);
 		return node;
 	}
 
-	const string &printSymbol() { return symbol; }
+	shared_ptr<Node> getChild() { return child; }
+	shared_ptr<Node> getSibling() { return sibling; }
+	shared_ptr<Node> getParent() { return parent; }
+
+	void printSymbol()
+	{
+		cout << symbol;
+	}
 
 private:
 	string symbol;
-	shared_ptr<Node> parent, lChild, rChild;
+	shared_ptr<Node> parent, child, sibling;
 };
 
 class Grammar
@@ -766,6 +773,28 @@ public:
 		}
 	}
 
+	void BFS(shared_ptr<Node> node, int depth = 1)
+	{
+		node->printSymbol();
+		// cout << "  ";
+		cout << "\n";
+		if (node->getChild())
+		{
+			for (int i(0); i < depth; ++i)
+				cout << "--";
+			BFS(node->getChild(), depth + 1);
+		}
+
+		// cout << "\n";
+		if (node->getSibling())
+		{
+			for (int i(0); i < depth-1; ++i)
+				cout << "--";
+			// cout << "|";
+			BFS(node->getSibling(), depth);
+		}
+	}
+
 	// 输出语法分析树
 	void printAST(vector<string> &input)
 	{
@@ -775,9 +804,7 @@ public:
 		{
 			// @TODO 输出
 			shared_ptr<Node> node = root;
-			while (node) {
-
-			}
+			BFS(node);
 		}
 		else
 		{
@@ -850,10 +877,10 @@ private:
 								// ----------------------------------------
 								// 生成树
 								shared_ptr<Node> parent = make_shared<Node>(kernel.symbol);
-								int ind = symbolVec.size() - 1;
+								int ind = symbolVec.size();
 								bool isChild = true;
 								shared_ptr<Node> backup;
-								for (int symbol_index(0); symbol_index < symbol_sz; ++symbol_index)
+								for (int symbol_index(symbol_sz); symbol_index > 0; --symbol_index)
 								{
 									auto temp = symbolVec[ind - symbol_index];
 									if (isChild)
@@ -863,8 +890,10 @@ private:
 									}
 									else
 										backup = backup->createSibling(temp);
-									symbolVec.pop_back();
+									// symbolVec.pop_back();
 								}
+								for (; symbol_sz > 0; --symbol_sz)
+									symbolVec.pop_back();
 								symbolVec.push_back(parent);
 
 								// ----------------------------------------
