@@ -3,7 +3,7 @@
  * @author Zhou YuXi (周誉喜) (zhouyuxi@stu.zzu.edu.cn)
  * @brief LR1语法分析器的设计与实现
  * @version 0.1
- * @date 2021-11-27
+ * @date 2021-11-28
  * @note c++11
  * @copyright Copyright (c) 2021
  *
@@ -19,17 +19,21 @@
 #include <algorithm>
 #include <queue>
 #include <stack>
+#include <string>
+#include <memory>
 
 using std::cout;
 using std::fstream;
 using std::ifstream;
 using std::make_pair;
+using std::make_shared;
 using std::map;
 using std::multimap;
 using std::ostream;
 using std::pair;
 using std::queue;
 using std::set;
+using std::shared_ptr;
 using std::stack;
 using std::string;
 using std::vector;
@@ -39,8 +43,6 @@ struct Item;
 class ItemsSet;
 
 class Grammar;
-
-class GrammarLR0;
 
 using NONTERMINAL = set<string>;						  //非终结符
 using TERMINAL = set<string>;							  //终结符
@@ -70,6 +72,51 @@ vector<string> recognizeSymbols(string &s)
 		outputs.push_back(s.substr(start, i - start));
 	return outputs;
 }
+
+/**
+ * @brief 语法生成树的节点
+ * @note 利用二叉树构建多叉树
+ * @note 左子右兄法表示多叉树
+ */
+class Node
+{
+public:
+	Node(string c) : symbol(c) {}
+	Node(string c, Node &p, Node &l, Node &r, bool color = false)
+		: Node(c)
+	{
+		parent = make_shared<Node>(p);
+		lChild = make_shared<Node>(l);
+		rChild = make_shared<Node>(r);
+	}
+	// 创建父节点
+	shared_ptr<Node> createParent(shared_ptr<Node> node)
+	{
+		// this->parent = make_shared<Node>(node);
+		node->createChild(make_shared<Node>(*this));
+		return node;
+	}
+	// 创建子节点  注意节点是创建的时候决定是否兄弟还是孩子，即红还是黑 其实红黑颜色是在遍历的时候非常重要
+	shared_ptr<Node> createChild(shared_ptr<Node> node)
+	{
+		this->lChild = node;
+		node->parent = make_shared<Node>(*this);
+		return node;
+	}
+	// 创建兄弟节点
+	shared_ptr<Node> createSibling(shared_ptr<Node> node)
+	{
+		this->rChild = node;
+		node->parent = make_shared<Node>(*this);
+		return node;
+	}
+
+	const string &printSymbol() { return symbol; }
+
+private:
+	string symbol;
+	shared_ptr<Node> parent, lChild, rChild;
+};
 
 class Grammar
 {
@@ -179,11 +226,11 @@ protected:
 	RULE rules;				  //规则
 	string startSymbol;		  //开始符号
 	string input;
-	FIRSTSET firstSet; //first集合
+	FIRSTSET firstSet; // first集合
 };
 
 /**
- * @brief 项目集
+ * @brief 不完整的项目集
  * 龙书的说法上分kernel 和 nonkernel
  * T -> .TE
  * T -> T.E
@@ -234,7 +281,7 @@ public:
 	struct cmp
 	{
 		bool operator()(const pair<string, pair<vector<string>, string>> &a,
-						const pair<string, pair<vector<string>, string>> &b)
+						const pair<string, pair<vector<string>, string>> &b) const
 		{
 			if (a.first < b.first)
 				return true;
@@ -458,15 +505,17 @@ class GrammarLR1 : public Grammar
 	}
 
 public:
-	GrammarLR1(ifstream &in) : Grammar(in)
+	explicit GrammarLR1(ifstream &in) : Grammar(in)
 	{
+		root = make_shared<Node>(startSymbol);
+		isLR1 = true;
 		getAllFirstSet();
 		makeItemsSetFamily();
-		isLR1 = true;
 	}
 
 	// 输出action
-	void printACTION(ostream &os)
+	// 判断是否LR1
+	void printACTION(ostream &os) const
 	{
 		if (isLR1)
 		{
@@ -521,7 +570,7 @@ public:
 					os << "\n";
 					continue;
 				}
-				for (const auto &sym : terminals) //action 表
+				for (const auto &sym : terminals) // action 表
 				{
 					auto result = gotoTable.find(make_pair(i, sym));
 					if (result != gotoTable.end())
@@ -540,7 +589,7 @@ public:
 	}
 
 	// 输出goto
-	void printGOTO(ostream &os)
+	void printGOTO(ostream &os) const
 	{
 		// 非终结符
 		os << "Goto:\n";
@@ -606,19 +655,26 @@ public:
 	}
 
 	// 总控程序
-	// 需要规约的时候，
+	// 我这里入栈的是状态集的索引，不是具体的符号，有点偷懒，但是确实可以
 	void parser(vector<string> &input)
 	{
 		// 分析一个具体字符串
 		if (isLR1)
 		{
+			cout << "[parsing]\n";
+			cout << "栈顶\t输入\t查表\t动作\t注\n";
 			// 栈  入栈 出栈
-			vector<int> inStack; // 我觉得只用状态集就行了
+			vector<int> inStack;		// 我觉得只用状态集的索引就行了
+			vector<string> symbolStack; //符号栈
 			inStack.push_back(0);
 			int id = 0;
+			symbolStack.push_back("#");
+			// symbolStack.push_back(input[id]);
 			while (!inStack.empty())
 			{
 				int item = inStack[inStack.size() - 1];
+				cout << item << " ";
+
 				int index;
 				bool hasReduced = false;
 				bool isNotShifted = false;
@@ -630,26 +686,37 @@ public:
 					{
 						if (k->second.first == kernel.body)
 						{
-							// os << "r" << k->second.second;
-							// signal = k->second.second;
 							if (input[id] == kernel.lookahead)
 							{
-								cout << "规约: " << kernel.symbol << " -> ";
-								for (const auto kk : kernel.body)
-									cout << kk << ' ';
+								cout << symbolStack[symbolStack.size() - 1] << "\t";
+								cout << input[id] << "\t"; //输入
+
+								cout << "出栈: " << kernel.body.size() << " 个符号和状态 ";
+
 								int len(0);
 								for (; len < kernel.body.size(); ++len)
+								{
 									inStack.pop_back();
+									symbolStack.pop_back();
+								}
 								if (inStack.empty() && id < input.size() - 1)
 								{
 									std::cerr << "失败\n";
 									exit(-1);
 								}
 								int target = gotoTable.at(make_pair(inStack[inStack.size() - 1], kernel.symbol));
-								cout << "进栈: " << target << ", " << kernel.symbol << "\n";
+								cout << "进栈: " << target << " " << kernel.symbol << "\t";
+								symbolStack.push_back(kernel.symbol);
+								cout << kernel.symbol << " -> ";
+								for (const auto &body : kernel.body)
+									cout << body << " ";
+								cout << "\n";
 								if (inStack.size() == 1 && id == input.size() - 1)
 								{
-									std::cout << "成功接收\n";
+									cout << inStack[inStack.size() - 1] << " " << symbolStack[symbolStack.size() - 1] << "\t";
+									symbolStack.pop_back();
+									cout << input[id] << "\tACC";
+									std::cout << "\t成功接收\n";
 									inStack.clear();
 									hasReduced = true;
 									break;
@@ -667,8 +734,180 @@ public:
 					auto k = gotoTable.find(make_pair(item, input[id]));
 					if (k != gotoTable.end())
 					{
-						cout << "移进：" << k->second << ", " << input[id] << "\n";
+						cout << symbolStack[symbolStack.size() - 1];
+						// 输入
+						cout << "\t" << input[id] << "\t"; //输入
+						cout << "进栈：" << k->second << ", " << input[id] << "\n";
+						symbolStack.push_back(input[id]);
 						// inStack.push_back(string(*ptr, 1));
+						item = k->second;
+						inStack.push_back(item);
+						id += 1; //字符串向后移动
+						isNotShifted = true;
+					}
+					else
+					{
+						std::cerr << "出现错误!\n";
+						isLR1 = false;
+						break;
+					}
+				}
+				if (!hasReduced && !isNotShifted)
+				{
+					std::cerr << "错误!\n";
+					isLR1 = false;
+					exit(-1);
+				}
+			}
+		}
+		else
+		{
+			cout << "不是LR1文法，无法分析\n";
+		}
+	}
+
+	// 输出语法分析树
+	void printAST(vector<string> &input)
+	{
+		cout << "语法分析树\n";
+		buildGrammarAnalysisTree(input);
+		if (isLR1)
+		{
+			// @TODO 输出
+			shared_ptr<Node> node = root;
+			while (node) {
+
+			}
+		}
+		else
+		{
+			cout << "fuck you! you are wrong!!!\n";
+		}
+	}
+
+private:
+	// 语法分析树
+	// @TODO 构建语法分析树
+	void buildGrammarAnalysisTree(vector<string> &input)
+	{
+		if (input.empty())
+		{
+			cout << "字符串空!\n";
+			return;
+		}
+		if (isLR1)
+		{
+			vector<int> inStack;		// 我觉得只用状态集的索引就行了
+			vector<string> symbolStack; //符号栈
+			inStack.push_back(0);
+			symbolStack.push_back("#");
+			int id = 0;
+			symbolStack.push_back(input[id]);
+
+			vector<shared_ptr<Node>> symbolVec;
+			// symbolVec.push_back(root);
+
+			while (!inStack.empty())
+			{
+				int item = inStack[inStack.size() - 1];
+
+				int index;
+				bool hasReduced = false;
+				bool isNotShifted = false;
+				if (this->itemsSetFamily[item].isToBeReduced(index))
+				{
+					auto kernel = itemsSetFamily[item].getKernel()[index];
+					auto range = this->findRulesScope(kernel.symbol);
+					for (auto k = range.first; k != range.second; ++k)
+					{
+						if (k->second.first == kernel.body)
+						{
+							if (input[id] == kernel.lookahead)
+							{
+								// cout << kernel.body[kernel.body.size() - 1] << "\t";
+								// cout << input[id] << "\t"; //输入
+
+								// cout << "出栈: " << kernel.body.size() << " 个符号和状态 ";
+
+								int len(0);
+								int symbol_sz(0);
+								for (; len < kernel.body.size(); ++len)
+								{
+									inStack.pop_back();
+									symbolStack.pop_back();
+
+									// 这些是要添加到树上
+									++symbol_sz;
+								}
+								if (inStack.empty() && id < input.size() - 1)
+								{
+									std::cerr << "失败\n";
+									isLR1 = false;
+									exit(-1);
+								}
+								int target = gotoTable.at(make_pair(inStack[inStack.size() - 1], kernel.symbol));
+								symbolStack.push_back(kernel.symbol);
+								// ----------------------------------------
+								// 生成树
+								shared_ptr<Node> parent = make_shared<Node>(kernel.symbol);
+								int ind = symbolVec.size() - 1;
+								bool isChild = true;
+								shared_ptr<Node> backup;
+								for (int symbol_index(0); symbol_index < symbol_sz; ++symbol_index)
+								{
+									auto temp = symbolVec[ind - symbol_index];
+									if (isChild)
+									{
+										backup = parent->createChild(temp);
+										isChild = false;
+									}
+									else
+										backup = backup->createSibling(temp);
+									symbolVec.pop_back();
+								}
+								symbolVec.push_back(parent);
+
+								// ----------------------------------------
+
+								// cout << kernel.symbol << " -> ";
+								// for (const auto &body : kernel.body)
+								// 	cout << body << " ";
+								// cout << "\n";
+								if (inStack.size() == 1 && id == input.size() - 1)
+								{
+									// @TODO 注意要跟根节点有联系
+									// -------------------------------------------
+									root = symbolVec[0];
+									symbolVec.pop_back();
+									symbolStack.pop_back();
+									// -------------------------------------------
+									// cout << inStack[inStack.size() - 1] << "\t";
+									// cout << input[id] << "\tACC";
+									// cout << "\t成功接收\n";
+									inStack.clear();
+									hasReduced = true;
+									break;
+								}
+								inStack.push_back(target);
+								hasReduced = true;
+								break;
+							}
+						}
+					}
+				}
+				if (!hasReduced)
+				{
+					// shift (移进)
+					auto k = gotoTable.find(make_pair(item, input[id]));
+					if (k != gotoTable.end())
+					{
+						// 输入
+						// cout << "\t" << input[id] << "\t"; //输入
+						symbolStack.push_back(input[id]); // 进入符号栈
+						symbolVec.push_back(make_shared<Node>(Node(input[id])));
+						// cout << "进栈：" << k->second << ", " << input[id] << "\n";
+						// inStack.push_back(string(*ptr, 1));
+						// symbolStack.pop_back();
 						item = k->second;
 						inStack.push_back(item);
 						id += 1; //字符串向后移动
@@ -685,7 +924,6 @@ public:
 					std::cerr << "错误!\n";
 					exit(-1);
 				}
-				// auto k = gotoTable.find(make_pair())
 			}
 		}
 		else
@@ -694,7 +932,6 @@ public:
 		}
 	}
 
-private:
 	// 生成项目集簇
 	void makeItemsSetFamily()
 	{
@@ -822,9 +1059,10 @@ private:
 		}
 	}
 
-	ITEMFAMILY itemsSetFamily;
-	map<pair<int, string>, int> gotoTable;
+	ITEMFAMILY itemsSetFamily;			   // 状态集簇
+	map<pair<int, string>, int> gotoTable; // 用于记录状态集之间的去向，在龙书里面ACTION 和 GOTO 统一为GOTO，所以如此命名
 	bool isLR1;
+	shared_ptr<Node> root;
 };
 
 int main(int argc, char const *argv[])
@@ -852,5 +1090,6 @@ int main(int argc, char const *argv[])
 	vector<string> ans = recognizeSymbols(input);
 	cout << g << std::endl;
 	g.parser(ans);
+	g.printAST(ans);
 	return 0;
 }
