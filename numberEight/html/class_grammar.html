@@ -1,0 +1,476 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.9.2"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>LR1: Grammar类 参考</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">LR1<span id="projectnumber">&#160;1</span>
+   </div>
+   <div id="projectbrief">LR1文法</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 制作者 Doxygen 1.9.2 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+var searchBox = new SearchBox("searchBox", "search",'搜索','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function() {
+  initMenu('',true,false,'search.php','搜索');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */
+</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#pub-methods">Public 成员函数</a> &#124;
+<a href="#pro-attribs">Protected 属性</a> &#124;
+<a href="class_grammar-members.html">所有成员列表</a>  </div>
+  <div class="headertitle"><div class="title">Grammar类 参考</div></div>
+</div><!--header-->
+<div class="contents">
+<div class="dynheader">
+类 Grammar 继承关系图:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_grammar__inherit__graph.png" border="0" usemap="#a_grammar_inherit__map" alt="Inheritance graph"/></div>
+<map name="a_grammar_inherit__map" id="a_grammar_inherit__map">
+<area shape="rect" title=" " alt="" coords="35,5,170,259"/>
+<area shape="rect" href="class_grammar_l_r1.html" title="LR1文法" alt="" coords="5,307,200,545"/>
+</map>
+</div>
+<div class="dynheader">
+Grammar 的协作图:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_grammar__coll__graph.png" border="0" usemap="#a_grammar_coll__map" alt="Collaboration graph"/></div>
+<map name="a_grammar_coll__map" id="a_grammar_coll__map">
+<area shape="rect" title=" " alt="" coords="217,344,352,495"/>
+<area shape="rect" title=" " alt="" coords="5,167,44,245"/>
+<area shape="rect" title=" " alt="" coords="73,167,169,245"/>
+<area shape="rect" title=" " alt="" coords="101,5,141,83"/>
+<area shape="rect" title=" " alt="" coords="193,160,365,252"/>
+<area shape="rect" title=" " alt="" coords="242,5,317,83"/>
+<area shape="rect" title=" " alt="" coords="389,167,444,245"/>
+<area shape="rect" title=" " alt="" coords="468,167,653,245"/>
+<area shape="rect" title=" " alt="" coords="537,5,584,83"/>
+</map>
+</div>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
+Public 成员函数</h2></td></tr>
+<tr class="memitem:a85dbdbf9f4490661452304b2779a1732"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grammar.html#a85dbdbf9f4490661452304b2779a1732">Grammar</a> (ifstream &amp;in)</td></tr>
+<tr class="separator:a85dbdbf9f4490661452304b2779a1732"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae41d5ebe716d6a3f199881e8cdb2f4e9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grammar.html#ae41d5ebe716d6a3f199881e8cdb2f4e9">isNonterminal</a> (const string &amp;s) const</td></tr>
+<tr class="separator:ae41d5ebe716d6a3f199881e8cdb2f4e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c8d1fdf2eef2d7ccd987fd9d3a8445f"><td class="memItemLeft" align="right" valign="top">pair&lt; RULE::const_iterator, RULE::const_iterator &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grammar.html#a2c8d1fdf2eef2d7ccd987fd9d3a8445f">findRulesScope</a> (const string &amp;symbol) const</td></tr>
+<tr class="separator:a2c8d1fdf2eef2d7ccd987fd9d3a8445f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a2fdef982ba7524a3f00b343ead73f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grammar.html#a4a2fdef982ba7524a3f00b343ead73f4">getAllFirstSet</a> ()</td></tr>
+<tr class="separator:a4a2fdef982ba7524a3f00b343ead73f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e62e52a20ab66eed478cb95f3f6dedb"><td class="memItemLeft" align="right" valign="top">set&lt; string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grammar.html#a7e62e52a20ab66eed478cb95f3f6dedb">getFirstSet</a> (const string &amp;symbol)</td></tr>
+<tr class="separator:a7e62e52a20ab66eed478cb95f3f6dedb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a715baf6276249a525803c68aa1e9b70c"><td class="memItemLeft" align="right" valign="top">set&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grammar.html#a715baf6276249a525803c68aa1e9b70c">calFirstSet</a> (const string &amp;symbol)</td></tr>
+<tr class="separator:a715baf6276249a525803c68aa1e9b70c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
+Protected 属性</h2></td></tr>
+<tr class="memitem:adb6e2d4cad4bed7f69460396db2cfd04"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grammar.html#adb6e2d4cad4bed7f69460396db2cfd04">nonTerminalNum</a></td></tr>
+<tr class="separator:adb6e2d4cad4bed7f69460396db2cfd04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98ba17748607da59c596bd02e1dd3aad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="main_8cpp.html#a4b225b5ff81d535fae58f3b1e93cdf61">NONTERMINAL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grammar.html#a98ba17748607da59c596bd02e1dd3aad">nonTerminals</a></td></tr>
+<tr class="separator:a98ba17748607da59c596bd02e1dd3aad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a42a02fb71a49143f95fcb02cf33fcd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grammar.html#a7a42a02fb71a49143f95fcb02cf33fcd">terminalNum</a></td></tr>
+<tr class="separator:a7a42a02fb71a49143f95fcb02cf33fcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3444cf2a2f0dc212325e8ae4760bc7e1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="main_8cpp.html#aa9be0b7332430b529ada498d56f83553">TERMINAL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grammar.html#a3444cf2a2f0dc212325e8ae4760bc7e1">terminals</a></td></tr>
+<tr class="separator:a3444cf2a2f0dc212325e8ae4760bc7e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a0b67c0461b499a87aed277fd7f3fa4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grammar.html#a7a0b67c0461b499a87aed277fd7f3fa4">rulesNum</a></td></tr>
+<tr class="separator:a7a0b67c0461b499a87aed277fd7f3fa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ed4845e22883f45debc40c270fdca29"><td class="memItemLeft" align="right" valign="top"><a class="el" href="main_8cpp.html#a034855f226ffe8e0a8a313a3d585112e">RULE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grammar.html#a1ed4845e22883f45debc40c270fdca29">rules</a></td></tr>
+<tr class="separator:a1ed4845e22883f45debc40c270fdca29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9040e65ceadbb784f059e3dd37157e9a"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grammar.html#a9040e65ceadbb784f059e3dd37157e9a">startSymbol</a></td></tr>
+<tr class="separator:a9040e65ceadbb784f059e3dd37157e9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a11134c1a8f7d8672bbfc43016603d6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="main_8cpp.html#a58b870eb21422f68b5430ac7cbef0035">FIRSTSET</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grammar.html#a4a11134c1a8f7d8672bbfc43016603d6">firstSet</a></td></tr>
+<tr class="separator:a4a11134c1a8f7d8672bbfc43016603d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">构造及析构函数说明</h2>
+<a id="a85dbdbf9f4490661452304b2779a1732" name="a85dbdbf9f4490661452304b2779a1732"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85dbdbf9f4490661452304b2779a1732">&#9670;&nbsp;</a></span>Grammar()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Grammar::Grammar </td>
+          <td>(</td>
+          <td class="paramtype">ifstream &amp;&#160;</td>
+          <td class="paramname"><em>in</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">成员函数说明</h2>
+<a id="a715baf6276249a525803c68aa1e9b70c" name="a715baf6276249a525803c68aa1e9b70c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a715baf6276249a525803c68aa1e9b70c">&#9670;&nbsp;</a></span>calFirstSet()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">set&lt; string &gt; Grammar::calFirstSet </td>
+          <td>(</td>
+          <td class="paramtype">const string &amp;&#160;</td>
+          <td class="paramname"><em>symbol</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2c8d1fdf2eef2d7ccd987fd9d3a8445f" name="a2c8d1fdf2eef2d7ccd987fd9d3a8445f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c8d1fdf2eef2d7ccd987fd9d3a8445f">&#9670;&nbsp;</a></span>findRulesScope()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">pair&lt; RULE::const_iterator, RULE::const_iterator &gt; Grammar::findRulesScope </td>
+          <td>(</td>
+          <td class="paramtype">const string &amp;&#160;</td>
+          <td class="paramname"><em>symbol</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4a2fdef982ba7524a3f00b343ead73f4" name="a4a2fdef982ba7524a3f00b343ead73f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a2fdef982ba7524a3f00b343ead73f4">&#9670;&nbsp;</a></span>getAllFirstSet()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Grammar::getAllFirstSet </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7e62e52a20ab66eed478cb95f3f6dedb" name="a7e62e52a20ab66eed478cb95f3f6dedb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e62e52a20ab66eed478cb95f3f6dedb">&#9670;&nbsp;</a></span>getFirstSet()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">set&lt; string &gt; &amp; Grammar::getFirstSet </td>
+          <td>(</td>
+          <td class="paramtype">const string &amp;&#160;</td>
+          <td class="paramname"><em>symbol</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae41d5ebe716d6a3f199881e8cdb2f4e9" name="ae41d5ebe716d6a3f199881e8cdb2f4e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae41d5ebe716d6a3f199881e8cdb2f4e9">&#9670;&nbsp;</a></span>isNonterminal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Grammar::isNonterminal </td>
+          <td>(</td>
+          <td class="paramtype">const string &amp;&#160;</td>
+          <td class="paramname"><em>s</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">类成员变量说明</h2>
+<a id="a4a11134c1a8f7d8672bbfc43016603d6" name="a4a11134c1a8f7d8672bbfc43016603d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a11134c1a8f7d8672bbfc43016603d6">&#9670;&nbsp;</a></span>firstSet</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="main_8cpp.html#a58b870eb21422f68b5430ac7cbef0035">FIRSTSET</a> Grammar::firstSet</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="adb6e2d4cad4bed7f69460396db2cfd04" name="adb6e2d4cad4bed7f69460396db2cfd04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb6e2d4cad4bed7f69460396db2cfd04">&#9670;&nbsp;</a></span>nonTerminalNum</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Grammar::nonTerminalNum</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a98ba17748607da59c596bd02e1dd3aad" name="a98ba17748607da59c596bd02e1dd3aad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98ba17748607da59c596bd02e1dd3aad">&#9670;&nbsp;</a></span>nonTerminals</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="main_8cpp.html#a4b225b5ff81d535fae58f3b1e93cdf61">NONTERMINAL</a> Grammar::nonTerminals</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1ed4845e22883f45debc40c270fdca29" name="a1ed4845e22883f45debc40c270fdca29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ed4845e22883f45debc40c270fdca29">&#9670;&nbsp;</a></span>rules</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="main_8cpp.html#a034855f226ffe8e0a8a313a3d585112e">RULE</a> Grammar::rules</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7a0b67c0461b499a87aed277fd7f3fa4" name="a7a0b67c0461b499a87aed277fd7f3fa4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a0b67c0461b499a87aed277fd7f3fa4">&#9670;&nbsp;</a></span>rulesNum</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Grammar::rulesNum</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9040e65ceadbb784f059e3dd37157e9a" name="a9040e65ceadbb784f059e3dd37157e9a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9040e65ceadbb784f059e3dd37157e9a">&#9670;&nbsp;</a></span>startSymbol</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">string Grammar::startSymbol</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7a42a02fb71a49143f95fcb02cf33fcd" name="a7a42a02fb71a49143f95fcb02cf33fcd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a42a02fb71a49143f95fcb02cf33fcd">&#9670;&nbsp;</a></span>terminalNum</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Grammar::terminalNum</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3444cf2a2f0dc212325e8ae4760bc7e1" name="a3444cf2a2f0dc212325e8ae4760bc7e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3444cf2a2f0dc212325e8ae4760bc7e1">&#9670;&nbsp;</a></span>terminals</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="main_8cpp.html#aa9be0b7332430b529ada498d56f83553">TERMINAL</a> Grammar::terminals</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<hr/>该类的文档由以下文件生成:<ul>
+<li><a class="el" href="main_8cpp.html">main.cpp</a></li>
+</ul>
+</div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+制作者&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2
+</small></address>
+</body>
+</html>

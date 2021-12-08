@@ -1,0 +1,152 @@
+\hypertarget{class_grammar}{}\doxysection{Grammar类 参考}
+\label{class_grammar}\index{Grammar@{Grammar}}
+
+
+类 Grammar 继承关系图\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=226pt]{class_grammar__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Grammar 的协作图\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_grammar__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public 成员函数}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_grammar_a85dbdbf9f4490661452304b2779a1732}{Grammar}} (ifstream \&in)
+\item 
+bool \mbox{\hyperlink{class_grammar_ae41d5ebe716d6a3f199881e8cdb2f4e9}{is\+Nonterminal}} (const string \&s) const
+\item 
+pair$<$ RULE\+::const\+\_\+iterator, RULE\+::const\+\_\+iterator $>$ \mbox{\hyperlink{class_grammar_a2c8d1fdf2eef2d7ccd987fd9d3a8445f}{find\+Rules\+Scope}} (const string \&symbol) const
+\item 
+void \mbox{\hyperlink{class_grammar_a4a2fdef982ba7524a3f00b343ead73f4}{get\+All\+First\+Set}} ()
+\item 
+set$<$ string $>$ \& \mbox{\hyperlink{class_grammar_a7e62e52a20ab66eed478cb95f3f6dedb}{get\+First\+Set}} (const string \&symbol)
+\item 
+set$<$ string $>$ \mbox{\hyperlink{class_grammar_a715baf6276249a525803c68aa1e9b70c}{cal\+First\+Set}} (const string \&symbol)
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected 属性}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{class_grammar_adb6e2d4cad4bed7f69460396db2cfd04}{non\+Terminal\+Num}}
+\item 
+\mbox{\hyperlink{main_8cpp_a4b225b5ff81d535fae58f3b1e93cdf61}{NONTERMINAL}} \mbox{\hyperlink{class_grammar_a98ba17748607da59c596bd02e1dd3aad}{non\+Terminals}}
+\item 
+int \mbox{\hyperlink{class_grammar_a7a42a02fb71a49143f95fcb02cf33fcd}{terminal\+Num}}
+\item 
+\mbox{\hyperlink{main_8cpp_aa9be0b7332430b529ada498d56f83553}{TERMINAL}} \mbox{\hyperlink{class_grammar_a3444cf2a2f0dc212325e8ae4760bc7e1}{terminals}}
+\item 
+int \mbox{\hyperlink{class_grammar_a7a0b67c0461b499a87aed277fd7f3fa4}{rules\+Num}}
+\item 
+\mbox{\hyperlink{main_8cpp_a034855f226ffe8e0a8a313a3d585112e}{RULE}} \mbox{\hyperlink{class_grammar_a1ed4845e22883f45debc40c270fdca29}{rules}}
+\item 
+string \mbox{\hyperlink{class_grammar_a9040e65ceadbb784f059e3dd37157e9a}{start\+Symbol}}
+\item 
+\mbox{\hyperlink{main_8cpp_a58b870eb21422f68b5430ac7cbef0035}{FIRSTSET}} \mbox{\hyperlink{class_grammar_a4a11134c1a8f7d8672bbfc43016603d6}{first\+Set}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{构造及析构函数说明}
+\mbox{\Hypertarget{class_grammar_a85dbdbf9f4490661452304b2779a1732}\label{class_grammar_a85dbdbf9f4490661452304b2779a1732}} 
+\index{Grammar@{Grammar}!Grammar@{Grammar}}
+\index{Grammar@{Grammar}!Grammar@{Grammar}}
+\doxysubsubsection{\texorpdfstring{Grammar()}{Grammar()}}
+{\footnotesize\ttfamily Grammar\+::\+Grammar (\begin{DoxyParamCaption}\item[{ifstream \&}]{in }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+\doxysubsection{成员函数说明}
+\mbox{\Hypertarget{class_grammar_a715baf6276249a525803c68aa1e9b70c}\label{class_grammar_a715baf6276249a525803c68aa1e9b70c}} 
+\index{Grammar@{Grammar}!calFirstSet@{calFirstSet}}
+\index{calFirstSet@{calFirstSet}!Grammar@{Grammar}}
+\doxysubsubsection{\texorpdfstring{calFirstSet()}{calFirstSet()}}
+{\footnotesize\ttfamily set$<$ string $>$ Grammar\+::cal\+First\+Set (\begin{DoxyParamCaption}\item[{const string \&}]{symbol }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_grammar_a2c8d1fdf2eef2d7ccd987fd9d3a8445f}\label{class_grammar_a2c8d1fdf2eef2d7ccd987fd9d3a8445f}} 
+\index{Grammar@{Grammar}!findRulesScope@{findRulesScope}}
+\index{findRulesScope@{findRulesScope}!Grammar@{Grammar}}
+\doxysubsubsection{\texorpdfstring{findRulesScope()}{findRulesScope()}}
+{\footnotesize\ttfamily pair$<$ RULE\+::const\+\_\+iterator, RULE\+::const\+\_\+iterator $>$ Grammar\+::find\+Rules\+Scope (\begin{DoxyParamCaption}\item[{const string \&}]{symbol }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_grammar_a4a2fdef982ba7524a3f00b343ead73f4}\label{class_grammar_a4a2fdef982ba7524a3f00b343ead73f4}} 
+\index{Grammar@{Grammar}!getAllFirstSet@{getAllFirstSet}}
+\index{getAllFirstSet@{getAllFirstSet}!Grammar@{Grammar}}
+\doxysubsubsection{\texorpdfstring{getAllFirstSet()}{getAllFirstSet()}}
+{\footnotesize\ttfamily void Grammar\+::get\+All\+First\+Set (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_grammar_a7e62e52a20ab66eed478cb95f3f6dedb}\label{class_grammar_a7e62e52a20ab66eed478cb95f3f6dedb}} 
+\index{Grammar@{Grammar}!getFirstSet@{getFirstSet}}
+\index{getFirstSet@{getFirstSet}!Grammar@{Grammar}}
+\doxysubsubsection{\texorpdfstring{getFirstSet()}{getFirstSet()}}
+{\footnotesize\ttfamily set$<$ string $>$ \& Grammar\+::get\+First\+Set (\begin{DoxyParamCaption}\item[{const string \&}]{symbol }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_grammar_ae41d5ebe716d6a3f199881e8cdb2f4e9}\label{class_grammar_ae41d5ebe716d6a3f199881e8cdb2f4e9}} 
+\index{Grammar@{Grammar}!isNonterminal@{isNonterminal}}
+\index{isNonterminal@{isNonterminal}!Grammar@{Grammar}}
+\doxysubsubsection{\texorpdfstring{isNonterminal()}{isNonterminal()}}
+{\footnotesize\ttfamily bool Grammar\+::is\+Nonterminal (\begin{DoxyParamCaption}\item[{const string \&}]{s }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+\doxysubsection{类成员变量说明}
+\mbox{\Hypertarget{class_grammar_a4a11134c1a8f7d8672bbfc43016603d6}\label{class_grammar_a4a11134c1a8f7d8672bbfc43016603d6}} 
+\index{Grammar@{Grammar}!firstSet@{firstSet}}
+\index{firstSet@{firstSet}!Grammar@{Grammar}}
+\doxysubsubsection{\texorpdfstring{firstSet}{firstSet}}
+{\footnotesize\ttfamily \mbox{\hyperlink{main_8cpp_a58b870eb21422f68b5430ac7cbef0035}{FIRSTSET}} Grammar\+::first\+Set\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{class_grammar_adb6e2d4cad4bed7f69460396db2cfd04}\label{class_grammar_adb6e2d4cad4bed7f69460396db2cfd04}} 
+\index{Grammar@{Grammar}!nonTerminalNum@{nonTerminalNum}}
+\index{nonTerminalNum@{nonTerminalNum}!Grammar@{Grammar}}
+\doxysubsubsection{\texorpdfstring{nonTerminalNum}{nonTerminalNum}}
+{\footnotesize\ttfamily int Grammar\+::non\+Terminal\+Num\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{class_grammar_a98ba17748607da59c596bd02e1dd3aad}\label{class_grammar_a98ba17748607da59c596bd02e1dd3aad}} 
+\index{Grammar@{Grammar}!nonTerminals@{nonTerminals}}
+\index{nonTerminals@{nonTerminals}!Grammar@{Grammar}}
+\doxysubsubsection{\texorpdfstring{nonTerminals}{nonTerminals}}
+{\footnotesize\ttfamily \mbox{\hyperlink{main_8cpp_a4b225b5ff81d535fae58f3b1e93cdf61}{NONTERMINAL}} Grammar\+::non\+Terminals\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{class_grammar_a1ed4845e22883f45debc40c270fdca29}\label{class_grammar_a1ed4845e22883f45debc40c270fdca29}} 
+\index{Grammar@{Grammar}!rules@{rules}}
+\index{rules@{rules}!Grammar@{Grammar}}
+\doxysubsubsection{\texorpdfstring{rules}{rules}}
+{\footnotesize\ttfamily \mbox{\hyperlink{main_8cpp_a034855f226ffe8e0a8a313a3d585112e}{RULE}} Grammar\+::rules\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{class_grammar_a7a0b67c0461b499a87aed277fd7f3fa4}\label{class_grammar_a7a0b67c0461b499a87aed277fd7f3fa4}} 
+\index{Grammar@{Grammar}!rulesNum@{rulesNum}}
+\index{rulesNum@{rulesNum}!Grammar@{Grammar}}
+\doxysubsubsection{\texorpdfstring{rulesNum}{rulesNum}}
+{\footnotesize\ttfamily int Grammar\+::rules\+Num\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{class_grammar_a9040e65ceadbb784f059e3dd37157e9a}\label{class_grammar_a9040e65ceadbb784f059e3dd37157e9a}} 
+\index{Grammar@{Grammar}!startSymbol@{startSymbol}}
+\index{startSymbol@{startSymbol}!Grammar@{Grammar}}
+\doxysubsubsection{\texorpdfstring{startSymbol}{startSymbol}}
+{\footnotesize\ttfamily string Grammar\+::start\+Symbol\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{class_grammar_a7a42a02fb71a49143f95fcb02cf33fcd}\label{class_grammar_a7a42a02fb71a49143f95fcb02cf33fcd}} 
+\index{Grammar@{Grammar}!terminalNum@{terminalNum}}
+\index{terminalNum@{terminalNum}!Grammar@{Grammar}}
+\doxysubsubsection{\texorpdfstring{terminalNum}{terminalNum}}
+{\footnotesize\ttfamily int Grammar\+::terminal\+Num\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{class_grammar_a3444cf2a2f0dc212325e8ae4760bc7e1}\label{class_grammar_a3444cf2a2f0dc212325e8ae4760bc7e1}} 
+\index{Grammar@{Grammar}!terminals@{terminals}}
+\index{terminals@{terminals}!Grammar@{Grammar}}
+\doxysubsubsection{\texorpdfstring{terminals}{terminals}}
+{\footnotesize\ttfamily \mbox{\hyperlink{main_8cpp_aa9be0b7332430b529ada498d56f83553}{TERMINAL}} Grammar\+::terminals\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+该类的文档由以下文件生成\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{main_8cpp}{main.\+cpp}}\end{DoxyCompactItemize}

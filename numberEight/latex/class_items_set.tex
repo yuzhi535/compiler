@@ -1,0 +1,138 @@
+\hypertarget{class_items_set}{}\doxysection{Items\+Set类 参考}
+\label{class_items_set}\index{ItemsSet@{ItemsSet}}
+
+
+项目集  
+
+
+
+
+Items\+Set 的协作图\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=192pt]{class_items_set__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{类}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_items_set_1_1cmp}{cmp}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public 成员函数}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_items_set_a328eeca8972694da9ab2cdfc665c6d39}{Items\+Set}} (\mbox{\hyperlink{main_8cpp_ad159e2469955e5b7b35800020e3609e6}{ITEMS}} i)
+\item 
+set$<$ string $>$ \mbox{\hyperlink{class_items_set_ac722f837ced519f0d28ad9bcdad8c067}{get\+First}} (const string \&symbol, const vector$<$ string $>$ \&body, int pos, \mbox{\hyperlink{class_grammar}{Grammar}} $\ast$g, const string \&lookahead)
+\item 
+void \mbox{\hyperlink{class_items_set_a28298256962b2f6ebb51eb0f1cf56cfc}{closure}} (\mbox{\hyperlink{class_grammar}{Grammar}} $\ast$g)
+\begin{DoxyCompactList}\small\item\em 闭包 \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_items_set_ac4e3adeccfb8939c9416f6c1882de235}{is\+All\+To\+Be\+Reduced}} () const
+\item 
+bool \mbox{\hyperlink{class_items_set_a5761e618012ed35cc06327779745604c}{is\+To\+Be\+Reduced}} (int \&index) const
+\item 
+const \mbox{\hyperlink{main_8cpp_ad159e2469955e5b7b35800020e3609e6}{ITEMS}} \& \mbox{\hyperlink{class_items_set_af4d2a6bba79eff9d51ea03be2f73bcfa}{get\+Kernel}} () const
+\item 
+const \mbox{\hyperlink{main_8cpp_ad159e2469955e5b7b35800020e3609e6}{ITEMS}} \& \mbox{\hyperlink{class_items_set_abf56b957b21cccc5ff1882c3c788ef2e}{get\+Non\+Kernel}} () const
+\item 
+bool \mbox{\hyperlink{class_items_set_abea8d96d81a400877d20a89923731ad8}{operator==}} (const \mbox{\hyperlink{class_items_set}{Items\+Set}} \&other)
+\end{DoxyCompactItemize}
+\doxysubsection*{Private 属性}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{main_8cpp_ad159e2469955e5b7b35800020e3609e6}{ITEMS}} \mbox{\hyperlink{class_items_set_ae3afc99c3c675de68fdcf1581e94a940}{kernels}}
+\item 
+\mbox{\hyperlink{main_8cpp_ad159e2469955e5b7b35800020e3609e6}{ITEMS}} \mbox{\hyperlink{class_items_set_aebf8e2d79f2bb337b27d819f630a90d6}{non\+Kernels}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{详细描述}
+项目集 
+
+\doxysubsection{构造及析构函数说明}
+\mbox{\Hypertarget{class_items_set_a328eeca8972694da9ab2cdfc665c6d39}\label{class_items_set_a328eeca8972694da9ab2cdfc665c6d39}} 
+\index{ItemsSet@{ItemsSet}!ItemsSet@{ItemsSet}}
+\index{ItemsSet@{ItemsSet}!ItemsSet@{ItemsSet}}
+\doxysubsubsection{\texorpdfstring{ItemsSet()}{ItemsSet()}}
+{\footnotesize\ttfamily Items\+Set\+::\+Items\+Set (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{main_8cpp_ad159e2469955e5b7b35800020e3609e6}{ITEMS}}}]{i }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+\doxysubsection{成员函数说明}
+\mbox{\Hypertarget{class_items_set_a28298256962b2f6ebb51eb0f1cf56cfc}\label{class_items_set_a28298256962b2f6ebb51eb0f1cf56cfc}} 
+\index{ItemsSet@{ItemsSet}!closure@{closure}}
+\index{closure@{closure}!ItemsSet@{ItemsSet}}
+\doxysubsubsection{\texorpdfstring{closure()}{closure()}}
+{\footnotesize\ttfamily void Items\+Set\+::closure (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_grammar}{Grammar}} $\ast$}]{g }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+闭包 
+
+
+\begin{DoxyParams}{参数}
+{\em g} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{注解}
+上一个实验\+LR0验证是否已经闭包完成只需要用一个数组标记一下就行了，相当于偷个懒 
+
+这次需要作出一些变化才能这样进行直接的映射比较 
+\end{DoxyNote}
+\mbox{\Hypertarget{class_items_set_ac722f837ced519f0d28ad9bcdad8c067}\label{class_items_set_ac722f837ced519f0d28ad9bcdad8c067}} 
+\index{ItemsSet@{ItemsSet}!getFirst@{getFirst}}
+\index{getFirst@{getFirst}!ItemsSet@{ItemsSet}}
+\doxysubsubsection{\texorpdfstring{getFirst()}{getFirst()}}
+{\footnotesize\ttfamily set$<$ string $>$ Items\+Set\+::get\+First (\begin{DoxyParamCaption}\item[{const string \&}]{symbol,  }\item[{const vector$<$ string $>$ \&}]{body,  }\item[{int}]{pos,  }\item[{\mbox{\hyperlink{class_grammar}{Grammar}} $\ast$}]{g,  }\item[{const string \&}]{lookahead }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_items_set_af4d2a6bba79eff9d51ea03be2f73bcfa}\label{class_items_set_af4d2a6bba79eff9d51ea03be2f73bcfa}} 
+\index{ItemsSet@{ItemsSet}!getKernel@{getKernel}}
+\index{getKernel@{getKernel}!ItemsSet@{ItemsSet}}
+\doxysubsubsection{\texorpdfstring{getKernel()}{getKernel()}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{main_8cpp_ad159e2469955e5b7b35800020e3609e6}{ITEMS}} \& Items\+Set\+::get\+Kernel (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_items_set_abf56b957b21cccc5ff1882c3c788ef2e}\label{class_items_set_abf56b957b21cccc5ff1882c3c788ef2e}} 
+\index{ItemsSet@{ItemsSet}!getNonKernel@{getNonKernel}}
+\index{getNonKernel@{getNonKernel}!ItemsSet@{ItemsSet}}
+\doxysubsubsection{\texorpdfstring{getNonKernel()}{getNonKernel()}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{main_8cpp_ad159e2469955e5b7b35800020e3609e6}{ITEMS}} \& Items\+Set\+::get\+Non\+Kernel (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_items_set_ac4e3adeccfb8939c9416f6c1882de235}\label{class_items_set_ac4e3adeccfb8939c9416f6c1882de235}} 
+\index{ItemsSet@{ItemsSet}!isAllToBeReduced@{isAllToBeReduced}}
+\index{isAllToBeReduced@{isAllToBeReduced}!ItemsSet@{ItemsSet}}
+\doxysubsubsection{\texorpdfstring{isAllToBeReduced()}{isAllToBeReduced()}}
+{\footnotesize\ttfamily bool Items\+Set\+::is\+All\+To\+Be\+Reduced (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_items_set_a5761e618012ed35cc06327779745604c}\label{class_items_set_a5761e618012ed35cc06327779745604c}} 
+\index{ItemsSet@{ItemsSet}!isToBeReduced@{isToBeReduced}}
+\index{isToBeReduced@{isToBeReduced}!ItemsSet@{ItemsSet}}
+\doxysubsubsection{\texorpdfstring{isToBeReduced()}{isToBeReduced()}}
+{\footnotesize\ttfamily bool Items\+Set\+::is\+To\+Be\+Reduced (\begin{DoxyParamCaption}\item[{int \&}]{index }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_items_set_abea8d96d81a400877d20a89923731ad8}\label{class_items_set_abea8d96d81a400877d20a89923731ad8}} 
+\index{ItemsSet@{ItemsSet}!operator==@{operator==}}
+\index{operator==@{operator==}!ItemsSet@{ItemsSet}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}}
+{\footnotesize\ttfamily bool Items\+Set\+::operator== (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_items_set}{Items\+Set}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+\doxysubsection{类成员变量说明}
+\mbox{\Hypertarget{class_items_set_ae3afc99c3c675de68fdcf1581e94a940}\label{class_items_set_ae3afc99c3c675de68fdcf1581e94a940}} 
+\index{ItemsSet@{ItemsSet}!kernels@{kernels}}
+\index{kernels@{kernels}!ItemsSet@{ItemsSet}}
+\doxysubsubsection{\texorpdfstring{kernels}{kernels}}
+{\footnotesize\ttfamily \mbox{\hyperlink{main_8cpp_ad159e2469955e5b7b35800020e3609e6}{ITEMS}} Items\+Set\+::kernels\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{class_items_set_aebf8e2d79f2bb337b27d819f630a90d6}\label{class_items_set_aebf8e2d79f2bb337b27d819f630a90d6}} 
+\index{ItemsSet@{ItemsSet}!nonKernels@{nonKernels}}
+\index{nonKernels@{nonKernels}!ItemsSet@{ItemsSet}}
+\doxysubsubsection{\texorpdfstring{nonKernels}{nonKernels}}
+{\footnotesize\ttfamily \mbox{\hyperlink{main_8cpp_ad159e2469955e5b7b35800020e3609e6}{ITEMS}} Items\+Set\+::non\+Kernels\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+该类的文档由以下文件生成\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{main_8cpp}{main.\+cpp}}\end{DoxyCompactItemize}

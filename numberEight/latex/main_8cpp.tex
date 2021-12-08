@@ -1,0 +1,137 @@
+\hypertarget{main_8cpp}{}\doxysection{main.\+cpp 文件参考}
+\label{main_8cpp}\index{main.cpp@{main.cpp}}
+
+
+LR1语法分析器的设计与实现  
+
+
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$list$>$}\newline
+{\ttfamily \#include $<$utility$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include $<$stack$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
+{\ttfamily \#include $<$map$>$}\newline
+{\ttfamily \#include $<$set$>$}\newline
+{\ttfamily \#include $<$algorithm$>$}\newline
+{\ttfamily \#include $<$queue$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$memory$>$}\newline
+main.\+cpp 的引用(Include)关系图\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{main_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{类}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_node}{Node}}
+\begin{DoxyCompactList}\small\item\em 语法生成树的节点 \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{class_grammar}{Grammar}}
+\item 
+struct \mbox{\hyperlink{struct_item}{Item}}
+\begin{DoxyCompactList}\small\item\em 不完整的项目集 龙书的说法上分kernel 和 nonkernel T -\/\texorpdfstring{$>$}{>} .TE T -\/\texorpdfstring{$>$}{>} T.\+E \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{class_items_set}{Items\+Set}}
+\begin{DoxyCompactList}\small\item\em 项目集 \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_items_set_1_1cmp}{Items\+Set\+::cmp}}
+\item 
+class \mbox{\hyperlink{class_grammar_l_r1}{Grammar\+LR1}}
+\begin{DoxyCompactList}\small\item\em LR1文法 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{类型定义}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{main_8cpp_a4b225b5ff81d535fae58f3b1e93cdf61}{NONTERMINAL}} = set$<$ string $>$
+\item 
+using \mbox{\hyperlink{main_8cpp_aa9be0b7332430b529ada498d56f83553}{TERMINAL}} = set$<$ string $>$
+\item 
+using \mbox{\hyperlink{main_8cpp_a034855f226ffe8e0a8a313a3d585112e}{RULE}} = multimap$<$ string, pair$<$ vector$<$ string $>$, int $>$ $>$
+\item 
+using \mbox{\hyperlink{main_8cpp_ad159e2469955e5b7b35800020e3609e6}{ITEMS}} = vector$<$ \mbox{\hyperlink{struct_item}{Item}} $>$
+\item 
+using \mbox{\hyperlink{main_8cpp_af4ff79afed96a63413f6d571efa41782}{ITEMFAMILY}} = vector$<$ \mbox{\hyperlink{class_items_set}{Items\+Set}} $>$
+\item 
+using \mbox{\hyperlink{main_8cpp_a58b870eb21422f68b5430ac7cbef0035}{FIRSTSET}} = map$<$ string, set$<$ string $>$ $>$
+\end{DoxyCompactItemize}
+\doxysubsection*{函数}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ string $>$ \mbox{\hyperlink{main_8cpp_a202ad9417c0bd919700909f73c44732c}{recognize\+Symbols}} (string \&s)
+\item 
+int \mbox{\hyperlink{main_8cpp_abf9e6b7e6f15df4b525a2e7705ba3089}{main}} (int argc, char const $\ast$argv\mbox{[}$\,$\mbox{]})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{详细描述}
+LR1语法分析器的设计与实现 
+
+\begin{DoxyAuthor}{作者}
+Zhou Yu\+Xi (周誉喜) (\href{mailto:zhouyuxi@stu.zzu.edu.cn}{\texttt{ zhouyuxi@stu.\+zzu.\+edu.\+cn}}) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{版本}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{日期}
+2021-\/11-\/28 
+\end{DoxyDate}
+\begin{DoxyNote}{注解}
+c++11 
+\end{DoxyNote}
+\begin{DoxyCopyright}{版权所有}
+Copyright (c) 2021 
+\end{DoxyCopyright}
+
+
+\doxysubsection{类型定义说明}
+\mbox{\Hypertarget{main_8cpp_a58b870eb21422f68b5430ac7cbef0035}\label{main_8cpp_a58b870eb21422f68b5430ac7cbef0035}} 
+\index{main.cpp@{main.cpp}!FIRSTSET@{FIRSTSET}}
+\index{FIRSTSET@{FIRSTSET}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{FIRSTSET}{FIRSTSET}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{main_8cpp_a58b870eb21422f68b5430ac7cbef0035}{FIRSTSET}} =  map$<$string, set$<$string$>$ $>$}
+
+\mbox{\Hypertarget{main_8cpp_af4ff79afed96a63413f6d571efa41782}\label{main_8cpp_af4ff79afed96a63413f6d571efa41782}} 
+\index{main.cpp@{main.cpp}!ITEMFAMILY@{ITEMFAMILY}}
+\index{ITEMFAMILY@{ITEMFAMILY}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{ITEMFAMILY}{ITEMFAMILY}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{main_8cpp_af4ff79afed96a63413f6d571efa41782}{ITEMFAMILY}} =  vector$<$\mbox{\hyperlink{class_items_set}{Items\+Set}}$>$}
+
+\mbox{\Hypertarget{main_8cpp_ad159e2469955e5b7b35800020e3609e6}\label{main_8cpp_ad159e2469955e5b7b35800020e3609e6}} 
+\index{main.cpp@{main.cpp}!ITEMS@{ITEMS}}
+\index{ITEMS@{ITEMS}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{ITEMS}{ITEMS}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{main_8cpp_ad159e2469955e5b7b35800020e3609e6}{ITEMS}} =  vector$<$\mbox{\hyperlink{struct_item}{Item}}$>$}
+
+\mbox{\Hypertarget{main_8cpp_a4b225b5ff81d535fae58f3b1e93cdf61}\label{main_8cpp_a4b225b5ff81d535fae58f3b1e93cdf61}} 
+\index{main.cpp@{main.cpp}!NONTERMINAL@{NONTERMINAL}}
+\index{NONTERMINAL@{NONTERMINAL}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{NONTERMINAL}{NONTERMINAL}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{main_8cpp_a4b225b5ff81d535fae58f3b1e93cdf61}{NONTERMINAL}} =  set$<$string$>$}
+
+\mbox{\Hypertarget{main_8cpp_a034855f226ffe8e0a8a313a3d585112e}\label{main_8cpp_a034855f226ffe8e0a8a313a3d585112e}} 
+\index{main.cpp@{main.cpp}!RULE@{RULE}}
+\index{RULE@{RULE}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{RULE}{RULE}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{main_8cpp_a034855f226ffe8e0a8a313a3d585112e}{RULE}} =  multimap$<$string, pair$<$vector$<$string$>$, int$>$ $>$}
+
+\mbox{\Hypertarget{main_8cpp_aa9be0b7332430b529ada498d56f83553}\label{main_8cpp_aa9be0b7332430b529ada498d56f83553}} 
+\index{main.cpp@{main.cpp}!TERMINAL@{TERMINAL}}
+\index{TERMINAL@{TERMINAL}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{TERMINAL}{TERMINAL}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{main_8cpp_aa9be0b7332430b529ada498d56f83553}{TERMINAL}} =  set$<$string$>$}
+
+
+
+\doxysubsection{函数说明}
+\mbox{\Hypertarget{main_8cpp_abf9e6b7e6f15df4b525a2e7705ba3089}\label{main_8cpp_abf9e6b7e6f15df4b525a2e7705ba3089}} 
+\index{main.cpp@{main.cpp}!main@{main}}
+\index{main@{main}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char const $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{main_8cpp_a202ad9417c0bd919700909f73c44732c}\label{main_8cpp_a202ad9417c0bd919700909f73c44732c}} 
+\index{main.cpp@{main.cpp}!recognizeSymbols@{recognizeSymbols}}
+\index{recognizeSymbols@{recognizeSymbols}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{recognizeSymbols()}{recognizeSymbols()}}
+{\footnotesize\ttfamily vector$<$ string $>$ recognize\+Symbols (\begin{DoxyParamCaption}\item[{string \&}]{s }\end{DoxyParamCaption})}
+

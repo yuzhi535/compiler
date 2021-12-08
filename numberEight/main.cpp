@@ -469,8 +469,6 @@ private:
 
 /**
  * @brief LR1文法
- * @TODO parse
- * @TODO 检查是否LR1文法
  */
 class GrammarLR1 : public Grammar
 {
@@ -809,7 +807,6 @@ public:
 		buildGrammarAnalysisTree(input);
 		if (isLR1)
 		{
-			// @TODO 输出
 			shared_ptr<Node> node = root;
 			DFS(node);
 		}
@@ -821,7 +818,6 @@ public:
 
 private:
 	// 语法分析树
-	// @TODO 构建语法分析树
 	void buildGrammarAnalysisTree(vector<string> &input)
 	{
 		if (input.empty())
@@ -911,7 +907,6 @@ private:
 								// cout << "\n";
 								if (inStack.size() == 1 && id == input.size() - 1)
 								{
-									// @TODO 注意要跟根节点有联系
 									// -------------------------------------------
 									root = symbolVec[0];
 									symbolVec.pop_back();
@@ -971,8 +966,6 @@ private:
 	// 生成项目集簇
 	void makeItemsSetFamily()
 	{
-		// @TODO 记住要寻找first集!!!
-		// -------------------------
 
 		auto production = *rules.find(startSymbol);
 		Item item(startSymbol, 0, production.second.first);
