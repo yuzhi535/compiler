@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <list>
+#include <utility>
 #include <vector>
 #include <stack>
 #include <fstream>
@@ -18,7 +19,6 @@
 #include <set>
 #include <algorithm>
 #include <queue>
-#include <stack>
 #include <string>
 #include <memory>
 
@@ -81,14 +81,16 @@ vector<string> recognizeSymbols(string &s)
 class Node
 {
 public:
-	Node(string c) : symbol(c) {}
-	Node(string c, Node &p, Node &l, Node &r, bool color = false)
-		: Node(c)
+	explicit Node(string c) : symbol(std::move(c)) {}
+
+	Node(string c, Node &p, Node &l, Node &r)
+		: Node(std::move(c))
 	{
 		parent = make_shared<Node>(p);
 		child = make_shared<Node>(l);
 		sibling = make_shared<Node>(r);
 	}
+
 	// 创建父节点
 	shared_ptr<Node> createParent(shared_ptr<Node> node)
 	{
@@ -96,6 +98,7 @@ public:
 		node->createChild(make_shared<Node>(*this));
 		return node;
 	}
+
 	// 创建子节点  注意节点是创建的时候决定是否兄弟还是孩子，即红还是黑 其实红黑颜色是在遍历的时候非常重要
 	shared_ptr<Node> createChild(shared_ptr<Node> node)
 	{
@@ -103,6 +106,7 @@ public:
 		node->parent = make_shared<Node>(*this);
 		return node;
 	}
+
 	// 创建兄弟节点
 	shared_ptr<Node> createSibling(shared_ptr<Node> node)
 	{
@@ -112,7 +116,9 @@ public:
 	}
 
 	shared_ptr<Node> getChild() { return child; }
+
 	shared_ptr<Node> getSibling() { return sibling; }
+
 	shared_ptr<Node> getParent() { return parent; }
 
 	void printSymbol()
@@ -232,8 +238,7 @@ protected:
 	int rulesNum;			  //规则个数
 	RULE rules;				  //规则
 	string startSymbol;		  //开始符号
-	string input;
-	FIRSTSET firstSet; // first集合
+	FIRSTSET firstSet;		  // first集合
 };
 
 /**
@@ -246,7 +251,7 @@ protected:
 struct Item
 {
 	Item(string sym, int position, vector<string> b, string t_lookahead = "#")
-		: symbol(sym), dotPos(position), body(b), lookahead(t_lookahead)
+		: symbol(std::move(sym)), dotPos(position), body(std::move(b)), lookahead(std::move(t_lookahead))
 	{
 	}
 
@@ -274,7 +279,8 @@ public:
 	}
 
 	// 得到first集
-	set<string> getFirst(const string &symbol, const vector<string> &body, int pos, Grammar *g, string lookahead)
+	set<string>
+	getFirst(const string &symbol, const vector<string> &body, int pos, Grammar *g, const string &lookahead)
 	{
 		auto re = g->getFirstSet(symbol);
 		if (re.find("ε") != re.end())
@@ -600,7 +606,7 @@ public:
 	{
 		// 非终结符
 		os << "Goto:\n";
-		for (const auto sym : nonTerminals)
+		for (const auto &sym : nonTerminals)
 		{
 			if (sym != startSymbol) // 准确的说 应该不是增强文法的开始符号
 				os << "   " << sym << "\t";
@@ -675,7 +681,7 @@ public:
 			vector<string> symbolStack; //符号栈
 			inStack.push_back(0);
 			int id = 0;
-			symbolStack.push_back("#");
+			symbolStack.emplace_back("#");
 			// symbolStack.push_back(input[id]);
 			while (!inStack.empty())
 			{
@@ -720,7 +726,8 @@ public:
 								cout << "\n";
 								if (inStack.size() == 1 && id == input.size() - 1)
 								{
-									cout << inStack[inStack.size() - 1] << " " << symbolStack[symbolStack.size() - 1] << "\t";
+									cout << inStack[inStack.size() - 1] << " " << symbolStack[symbolStack.size() - 1]
+										 << "\t";
 									symbolStack.pop_back();
 									cout << input[id] << "\tACC";
 									std::cout << "\t成功接收\n";
@@ -773,7 +780,7 @@ public:
 		}
 	}
 
-	void BFS(shared_ptr<Node> node, int depth = 1)
+	void DFS(const shared_ptr<Node> &node, int depth = 1)
 	{
 		node->printSymbol();
 		// cout << "  ";
@@ -782,16 +789,16 @@ public:
 		{
 			for (int i(0); i < depth; ++i)
 				cout << "--";
-			BFS(node->getChild(), depth + 1);
+			DFS(node->getChild(), depth + 1);
 		}
 
 		// cout << "\n";
 		if (node->getSibling())
 		{
-			for (int i(0); i < depth-1; ++i)
+			for (int i(0); i < depth - 1; ++i)
 				cout << "--";
 			// cout << "|";
-			BFS(node->getSibling(), depth);
+			DFS(node->getSibling(), depth);
 		}
 	}
 
@@ -804,7 +811,7 @@ public:
 		{
 			// @TODO 输出
 			shared_ptr<Node> node = root;
-			BFS(node);
+			DFS(node);
 		}
 		else
 		{

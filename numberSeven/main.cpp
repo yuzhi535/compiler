@@ -1,12 +1,12 @@
 /**
  * @file main.cpp
- * @author Zhou YuXi (周誉喜) (zhouyuxi.abc@gmail.com)
+ * @author Zhou YuXi (周誉喜) (zhouyuxi@stu.zzu.edu.cn)
  * @brief LR0语法分析器的设计与实现
  * @version 0.1
  * @date 2021-11-20
  * @note c++11
  * @copyright Copyright (c) 2021
- * 
+ *
  */
 
 #include <iostream>
@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <queue>
 #include <stack>
+#include <string>
 
 using std::cout;
 using std::fstream;
@@ -40,7 +41,7 @@ class ItemsSet;
 
 class Grammar;
 
-class GrammarLR0;
+class LR0;
 
 using NONTERMINAL = set<string>;						  //非终结符
 using TERMINAL = set<string>;							  //终结符
@@ -267,17 +268,17 @@ private:
  * @brief LR0文法
  *
  */
-class GrammarLR0 : public Grammar
+class LR0 : public Grammar
 {
-	friend ostream &operator<<(ostream &os, GrammarLR0 &other)
+	friend ostream &operator<<(ostream &os, LR0 &other)
 	{
 		os << "LR(0) 项目集簇\n";
 		other.printItemsFamily(os);
-		other.printDFA(os);
-		other.printACTION(os);
+		other.print_dfa(os);
+		other.print_action(os);
 		os << "\n";
 		if (other.isLR0)
-			other.printGOTO(os);
+			other.print_goto(os);
 		else
 		{
 			os << "不是LR0!文法有错!\n";
@@ -286,7 +287,7 @@ class GrammarLR0 : public Grammar
 	}
 
 public:
-	explicit GrammarLR0(ifstream &in) : Grammar(in)
+	explicit LR0(ifstream &in) : Grammar(in)
 	{
 		// augment();
 		makeItemsFamily();
@@ -333,7 +334,7 @@ public:
 	}
 
 	// 输出DFA等信息
-	void printDFA(ostream &os) const
+	void print_dfa(ostream &os) const
 	{
 		os << "DFA\n";
 		os << "  状态个数：" << this->itemsSetFamily.size() << "\n";
@@ -353,7 +354,7 @@ public:
 		os << "}\n";
 	}
 
-	void printACTION(ostream &os)
+	void print_action(ostream &os)
 	{
 		//@TODO 验证是否LR(0)文法
 		for (auto &itemsSet : this->itemsSetFamily)
@@ -412,7 +413,7 @@ public:
 					os << "\n";
 					continue;
 				}
-				for (const auto &sym : terminals) //action 表
+				for (const auto &sym : terminals) // action 表
 				{
 					auto result = gotoTable.find(make_pair(i, sym));
 					if (result != gotoTable.end())
@@ -430,7 +431,7 @@ public:
 		}
 	}
 
-	void printGOTO(ostream &os)
+	void print_goto(ostream &os)
 	{
 		// 非终结符
 		os << "Goto:\n";
@@ -479,7 +480,6 @@ public:
 						{
 							// os << "r" << k->second.second;
 							// signal = k->second.second;
-							cout << "规约: " << kernel.symbol << " -> ";
 							for (const auto kk : kernel.body)
 								cout << kk << ' ';
 							int len(0);
@@ -490,7 +490,14 @@ public:
 								std::cerr << "失败\n";
 								break; //跳出循环了
 							}
-							int target = gotoTable.at(make_pair(inStack[inStack.size() - 1], kernel.symbol));
+							auto tt = gotoTable.find(make_pair(inStack[inStack.size() - 1], kernel.symbol));
+							if (tt == gotoTable.end())
+							{
+								cout << "不是LR0文法!\n";
+								exit(-1);
+							}
+							int target = tt->second;
+							cout << "规约: " << kernel.symbol << " -> ";
 							cout << "进栈: " << target << ", " << kernel.symbol << "\n";
 							if (inStack.size() == 1 && id == input.size() - 1)
 							{
@@ -531,16 +538,6 @@ public:
 	}
 
 private:
-	// 增强文法
-	__attribute__((unused)) void augment()
-	{
-		string aug_start_symbol = "S`";
-		rules.insert(make_pair(aug_start_symbol, make_pair(vector<string>{startSymbol}, rules.size())));
-		nonTerminals.insert(aug_start_symbol);
-		nonTerminalNum = nonTerminals.size();
-		startSymbol = aug_start_symbol;
-	}
-
 	// 制作项目集簇
 	// 往右移动一个位置
 	void makeItemsFamily()
@@ -651,7 +648,7 @@ private:
 					itemsSetFamily.push_back(itemsSet1);
 			}
 		}
-		}
+	}
 
 	ITEMFAMILY itemsSetFamily;
 	map<pair<int, string>, int> gotoTable;
@@ -674,7 +671,7 @@ int main(int argc, char const *argv[])
 		std::cerr << "不能打开文件，文件不存在?" << std::endl;
 		exit(-1);
 	}
-	GrammarLR0 g(in);
+	LR0 g(in);
 	string input;
 	do
 	{
