@@ -42,7 +42,11 @@ struct Item;
 
 class ItemsSet;
 
+class Node;
+
 class Grammar;
+
+class GrammarLR1;
 
 using NONTERMINAL = set<string>;						  //非终结符
 using TERMINAL = set<string>;							  //终结符
@@ -99,7 +103,7 @@ public:
 		return node;
 	}
 
-	// 创建子节点  注意节点是创建的时候决定是否兄弟还是孩子，即红还是黑 其实红黑颜色是在遍历的时候非常重要
+	// 创建子节点
 	shared_ptr<Node> createChild(shared_ptr<Node> node)
 	{
 		this->child = node;
