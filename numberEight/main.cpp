@@ -242,7 +242,7 @@ protected:
 };
 
 /**
- * @brief 不完整的项目集
+ * @brief 项目
  * 龙书的说法上分kernel 和 nonkernel
  * T -> .TE
  * T -> T.E
@@ -1090,9 +1090,36 @@ private:
 
 	ITEMFAMILY itemsSetFamily;			   // 状态集簇
 	map<pair<int, string>, int> gotoTable; // 用于记录状态集之间的去向，在龙书里面ACTION 和 GOTO 统一为GOTO，所以如此命名
-	bool isLR1;
-	shared_ptr<Node> root;
+	bool isLR1;							   // 是否真的LR1
+	shared_ptr<Node> root;				   // 语法分析树的根节点
+
+	// map<pair<int, string>, pair<int, int>> ACTIONTable; // action表  ItemSet's index, InputString-> action(shift=0,reduce=1,accept=2), ItemSet's index
+	// map<int, pair<string, int>> GOTOTable;				// goto表 ItemSet's index -> Symbol, action(shift)
 };
+
+// /**
+//  * @brief 分析器
+//  * @note ACTION GOTO 输入的文法
+//  */
+// class Parser
+// {
+// public:
+// 	Parser()
+// 	{
+// 	}
+
+// protected:
+// 	map<pair<int, string>, int> gotoTable; // GOTO表
+// 	string inputs;						   //需要的文法
+// };
+
+// class AST : public Parser
+// {
+// public:
+// 	AST() {}
+
+// private:
+// };
 
 int main(int argc, char const *argv[])
 {
