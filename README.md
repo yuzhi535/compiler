@@ -1,2 +1,2 @@
 # compiler
-compiler homework code
+Compilation principle experimental code
