@@ -805,7 +805,7 @@ public:
 	}
 
 	// 输出语法分析树
-	void printAST(vector<string> &input)
+	void printTree(vector<string> &input)
 	{
 		cout << "语法分析树\n";
 		buildGrammarAnalysisTree(input);
@@ -821,7 +821,7 @@ public:
 	}
 
 private:
-	// 语法分析树
+	// 语法分析树 其实可以和分析程序合并到一起，但我这里想单独列出语法树的代码，就没有合并.
 	void buildGrammarAnalysisTree(vector<string> &input)
 	{
 		if (input.empty())
@@ -1150,6 +1150,6 @@ int main(int argc, char const *argv[])
 	vector<string> ans = recognizeSymbols(input);
 	cout << g << std::endl;
 	g.parser(ans);
-	g.printAST(ans);
+	g.printTree(ans);
 	return 0;
 }
